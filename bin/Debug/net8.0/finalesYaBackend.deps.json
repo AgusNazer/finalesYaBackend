@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "finalesYaBackend/1.0.0": {
+        "runtime": {
+          "finalesYaBackend.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "finalesYaBackend/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
