@@ -27,5 +27,4 @@ Proyecto en desarrollo inicial. Próximamente se integrarán autenticación, con
 Simplificar la vida académica de estudiantes argentinos con una app liviana, rápida y útil para planificar exámenes y compartir experiencias entre compañeros.
 
 ---
-
-> Proyecto desarrollado con fines educativos y prácticos.
+👨‍💻 Desarrollado por Agustín Nazer
