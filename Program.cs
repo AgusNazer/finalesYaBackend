@@ -1,7 +1,15 @@
+using finalesYaBackend.services;
+using finalesYaBackend.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IUserService, UserService>();
+
 
 var app = builder.Build();
 
