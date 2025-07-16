@@ -1,4 +1,3 @@
-using finalesYaBackend.services;
 using finalesYaBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
