@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using finalesYaBackend.services;
+using finalesYaBackend.Services;
 using finalesYaBackend.Models;
 
 namespace finalesYaBackend.Controllers
@@ -18,13 +18,13 @@ namespace finalesYaBackend.Controllers
         [HttpGet]
         public ActionResult<List<User>> GetAll()
         {
-            return Ok(_userService.GetAll());
+            return Ok(_userService.GetAllAsync());
         }
 
         [HttpGet("{id}")]
         public ActionResult<User> GetById(int id)
         {
-            var user = _userService.GetById(id);
+            var user = _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
             return Ok(user);
         }
@@ -32,7 +32,7 @@ namespace finalesYaBackend.Controllers
         [HttpPost]
         public ActionResult<User> Create([FromBody] User user)
         {
-            var created = _userService.Create(user);
+            var created = _userService.CreateAsync(user);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
@@ -41,7 +41,7 @@ namespace finalesYaBackend.Controllers
         {
             try
             {
-                _userService.Update(id, user);
+                _userService.UpdateAsync(id, user);
                 return NoContent();
             }
             catch (KeyNotFoundException)
@@ -55,7 +55,7 @@ namespace finalesYaBackend.Controllers
         {
             try
             {
-                _userService.Delete(id);
+                _userService.DeleteAsync(id);
                 return NoContent();
             }
             catch (KeyNotFoundException)

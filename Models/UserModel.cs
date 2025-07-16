@@ -4,6 +4,8 @@ namespace finalesYaBackend.Models
     public enum UserRole
     {
         User,
+        
+        
         SuperUser
     }
 
