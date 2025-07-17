@@ -1,3 +1,5 @@
+using BCrypt.Net;
+using finalesYaBackend.DTOs;
 using finalesYaBackend.Services;
 using finalesYaBackend.Models;
 
@@ -22,16 +24,27 @@ namespace finalesYaBackend.Services
             return _users.FirstOrDefault(u => u.Id == id);
         }
 
-        public async Task<User> CreateAsync(User user)
+        public async Task<User> CreateAsync(UserCreateDto dto)
         {
-            // Simula operación asíncrona
             await Task.Delay(1);
-            
-            user.Id = _nextId++;
-            user.RegisteredAt = DateTime.UtcNow;
+
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
+            var user = new User
+            {
+                Id = _nextId++,
+                Name = dto.Name,
+                Email = dto.Email,
+                PasswordHash = hashedPassword,
+                University = dto.University,
+                Role = dto.Role,
+                RegisteredAt = DateTime.UtcNow
+            };
+
             _users.Add(user);
             return user;
         }
+
 
         public async Task<User?> UpdateAsync(int id, User updatedUser)
         {
