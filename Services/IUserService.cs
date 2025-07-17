@@ -1,3 +1,5 @@
+using finalesYaBackend.DTOs;
+
 namespace finalesYaBackend.Services // PascalCase para carpetas
 {
     using finalesYaBackend.Models;
@@ -21,7 +23,7 @@ namespace finalesYaBackend.Services // PascalCase para carpetas
         /// </summary>
         /// <param name="user">Usuario a crear</param>
         /// <returns>Usuario creado</returns>
-        Task<User> CreateAsync(User user);
+        Task<User> CreateAsync(UserCreateDto dto);
 
         /// <summary>
         /// Actualiza un usuario existente de forma asíncrona.

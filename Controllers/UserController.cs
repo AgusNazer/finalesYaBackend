@@ -1,3 +1,4 @@
+using finalesYaBackend.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using finalesYaBackend.Services;
 using finalesYaBackend.Models;
@@ -30,11 +31,12 @@ namespace finalesYaBackend.Controllers
         }
 
         [HttpPost]
-        public ActionResult<User> Create([FromBody] User user)
+        public async Task<ActionResult<User>> Create([FromBody] UserCreateDto dto)
         {
-            var created = _userService.CreateAsync(user);
+            var created = await _userService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
+
 
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] User user)
