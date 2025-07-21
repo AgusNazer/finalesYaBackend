@@ -21,8 +21,8 @@ public class TestSwagger : ControllerBase
     }
 // ACA IRIA LO DE LA PAI DE JSON PLACEHOLDER
 
-// GET /api/swagger/posts
-    [HttpGet("posts")]
+// GET /api/swagger/traerPosts
+    [HttpGet("traerPosts")]
     public async Task<IActionResult> GetPosts()
     {
         var response = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/posts");

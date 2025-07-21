@@ -23,18 +23,38 @@ namespace finalesYaBackend.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<User> GetById(int id)
+        public async Task<ActionResult<UserReadDto>> GetById(int id)
         {
-            var user = _userService.GetByIdAsync(id);
+            var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
-            return Ok(user);
+            var readDto = new UserReadDto()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                University = user.University,
+                Role = user.Role,
+                RegisteredAt = user.RegisteredAt,
+            };
+            return Ok(readDto);
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> Create([FromBody] UserCreateDto dto)
+        public async Task<ActionResult<UserReadDto>> Create([FromBody] UserCreateDto dto)
         {
             var created = await _userService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+
+            var readDto = new UserReadDto
+            {
+                Id = created.Id,
+                Name = created.Name,
+                Email = created.Email,
+                University = created.University,
+                Role = created.Role,
+                RegisteredAt = created.RegisteredAt
+            };
+
+            return CreatedAtAction(nameof(GetById), new { id = readDto.Id }, readDto);
         }
 
 

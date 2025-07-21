@@ -47,3 +47,4 @@
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/finalesYaBackend.MvcApplicationPartsAssemblyInfo.cs
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/BCrypt.Net-Next.dll
