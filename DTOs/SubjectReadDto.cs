@@ -7,6 +7,6 @@ public class SubjectReadDto
     public string? Major { get; set; }
     public int? YearTaken { get; set; }
 
-    public List<ExamDto>? Exams { get; set; } // Opcional
-    public List<CommentDto>? Comments { get; set; } // Opcional
+    // public List<ExamDto>? Exams { get; set; } // Opcional
+    // public List<CommentDto>? Comments { get; set; } // Opcional
 }
