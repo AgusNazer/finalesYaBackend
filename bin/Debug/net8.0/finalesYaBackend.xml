@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>finalesYaBackend</name>
+    </assembly>
+    <members>
+        <member name="M:finalesYaBackend.Controllers.ExamController.GetAll">
+            <summary>
+            Obtiene todos los exámenes registrados.
+            </summary>
+            <returns>Lista de todos los exámenes con información de la materia</returns>
+            <response code="200">Devuelve la lista de exámenes</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.ExamController.GetById(System.Int32)">
+            <summary>
+            Obtiene un examen específico por ID.
+            </summary>
+            <param name="id">ID del examen</param>
+            <returns>Examen con el ID especificado</returns>
+            <response code="200">Devuelve el examen encontrado</response>
+            <response code="404">Si no se encuentra el examen</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.ExamController.GetBySubjectId(System.Int32)">
+            <summary>
+            Obtiene todos los exámenes de una materia específica.
+            </summary>
+            <param name="subjectId">ID de la materia</param>
+            <returns>Lista de exámenes de la materia especificada</returns>
+            <response code="200">Devuelve la lista de exámenes de la materia</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.ExamController.Create(finalesYaBackend.DTOs.ExamCreateDto)">
+            <summary>
+            Crea un nuevo examen.
+            </summary>
+            <param name="dto">Datos del examen a crear</param>
+            <returns>Examen creado</returns>
+            <response code="201">Devuelve el examen recién creado</response>
+            <response code="400">Si los datos son inválidos</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.ExamController.Update(System.Int32,finalesYaBackend.DTOs.ExamCreateDto)">
+            <summary>
+            Actualiza un examen existente.
+            </summary>
+            <param name="id">ID del examen a actualizar</param>
+            <param name="dto">Nuevos datos del examen</param>
+            <returns>Examen actualizado</returns>
+            <response code="200">Devuelve el examen actualizado</response>
+            <response code="404">Si no se encuentra el examen</response>
+            <response code="400">Si los datos son inválidos</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.ExamController.Delete(System.Int32)">
+            <summary>
+            Elimina un examen.
+            </summary>
+            <param name="id">ID del examen a eliminar</param>
+            <returns>Confirmación de eliminación</returns>
+            <response code="204">Examen eliminado correctamente</response>
+            <response code="404">Si no se encuentra el examen</response>
+        </member>
+        <member name="T:finalesYaBackend.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:finalesYaBackend.Migrations.MakeSubjectUserOptional">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.MakeSubjectUserOptional.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.MakeSubjectUserOptional.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.MakeSubjectUserOptional.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Services.IExamService.GetAllAsync">
+            <summary>
+            Obtiene todos los exámenes registrados con información de la materia asociada.
+            </summary>
+            <returns>Lista de todos los exámenes</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IExamService.GetByIdAsync(System.Int32)">
+            <summary>
+            Obtiene un examen específico por su ID.
+            </summary>
+            <param name="id">ID del examen</param>
+            <returns>Examen encontrado o null si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IExamService.CreateAsync(finalesYaBackend.DTOs.ExamCreateDto)">
+            <summary>
+            Crea un nuevo examen asociado a una materia.
+            </summary>
+            <param name="dto">Datos del examen a crear</param>
+            <returns>Examen creado con información completa</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IExamService.UpdateAsync(System.Int32,finalesYaBackend.DTOs.ExamCreateDto)">
+            <summary>
+            Actualiza un examen existente.
+            </summary>
+            <param name="id">ID del examen a actualizar</param>
+            <param name="dto">Nuevos datos del examen</param>
+            <returns>Examen actualizado o null si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IExamService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina un examen por su ID.
+            </summary>
+            <param name="id">ID del examen a eliminar</param>
+            <returns>True si se eliminó correctamente, false si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IExamService.GetBySubjectIdAsync(System.Int32)">
+            <summary>
+            Obtiene todos los exámenes de una materia específica.
+            </summary>
+            <param name="subjectId">ID de la materia</param>
+            <returns>Lista de exámenes de la materia especificada</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ISubjectService.GetAllAsync">
+            <summary>
+            Devuelve todos los subjects de forma asíncrona.
+            </summary>
+        </member>
+        <member name="M:finalesYaBackend.Services.ISubjectService.GetByIdAsync(System.Int32)">
+            <summary>
+            Devuelve un subject por ID de forma asíncrona.
+            </summary>
+            <param name="id">ID del subject</param>
+            <returns>Subject encontrado o null si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ISubjectService.CreateAsync(finalesYaBackend.DTOs.SubjectCreateDto)">
+            <summary>
+            Crea un nuevo subject de forma asíncrona.
+            </summary>
+            <param name="dto">DTO con los datos del nuevo subject</param>
+            <returns>Subject creado</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ISubjectService.UpdateAsync(System.Int32,finalesYaBackend.DTOs.SubjectCreateDto)">
+            <summary>
+            Actualiza un subject existente de forma asíncrona.
+            </summary>
+            <param name="id">ID del subject a actualizar</param>
+            <param name="subject">Datos actualizados del subject</param>
+            <returns>Subject actualizado o null si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ISubjectService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina un subject por ID de forma asíncrona.
+            </summary>
+            <param name="id">ID del subject a eliminar</param>
+            <returns>True si se eliminó correctamente, false si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IUserService.GetAllAsync">
+            <summary>
+            Devuelve todos los usuarios de forma asíncrona.
+            </summary>
+        </member>
+        <member name="M:finalesYaBackend.Services.IUserService.GetByIdAsync(System.Int32)">
+            <summary>
+            Devuelve un usuario por ID de forma asíncrona.
+            </summary>
+            <param name="id">ID del usuario</param>
+            <returns>Usuario encontrado o null si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IUserService.CreateAsync(finalesYaBackend.DTOs.UserCreateDto)">
+            <summary>
+            Crea un nuevo usuario de forma asíncrona.
+            </summary>
+            <param name="user">Usuario a crear</param>
+            <returns>Usuario creado</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IUserService.UpdateAsync(System.Int32,finalesYaBackend.Models.User)">
+            <summary>
+            Actualiza un usuario existente de forma asíncrona.
+            </summary>
+            <param name="id">ID del usuario a actualizar</param>
+            <param name="user">Datos del usuario actualizado</param>
+            <returns>Usuario actualizado o null si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.IUserService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina un usuario por ID de forma asíncrona.
+            </summary>
+            <param name="id">ID del usuario a eliminar</param>
+            <returns>True si se eliminó correctamente, false si no existe</returns>
+        </member>
+    </members>
+</doc>

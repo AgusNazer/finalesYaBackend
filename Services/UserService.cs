@@ -16,17 +16,38 @@ namespace finalesYaBackend.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<UserReadDto>> GetAllAsync()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+    
+            return users.Select(user => new UserReadDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                University = user.University,
+                Role = user.Role,
+                RegisteredAt = user.RegisteredAt
+            });
         }
 
-        public async Task<User?> GetByIdAsync(int id)
+        public async Task<UserReadDto?> GetByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return null;
+    
+            return new UserReadDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                University = user.University,
+                Role = user.Role,
+                RegisteredAt = user.RegisteredAt
+            };
         }
 
-        public async Task<User> CreateAsync(UserCreateDto dto)
+        public async Task<UserReadDto> CreateAsync(UserCreateDto dto)
         {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
@@ -41,9 +62,18 @@ namespace finalesYaBackend.Services
             };
 
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();  // ← ESTO guarda en la DB real
+            await _context.SaveChangesAsync();
 
-            return user;
+            // Devolver UserReadDto en lugar de User
+            return new UserReadDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                University = user.University,
+                Role = user.Role,
+                RegisteredAt = user.RegisteredAt
+            };
         }
 
         public async Task<User?> UpdateAsync(int id, User updatedUser)

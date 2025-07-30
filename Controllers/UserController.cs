@@ -17,9 +17,10 @@ namespace finalesYaBackend.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<User>> GetAll()
+        public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAll()
         {
-            return Ok(_userService.GetAllAsync());
+            var users = await _userService.GetAllAsync();
+            return Ok(users);
         }
 
         [HttpGet("{id}")]
@@ -27,16 +28,7 @@ namespace finalesYaBackend.Controllers
         {
             var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
-            var readDto = new UserReadDto()
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                University = user.University,
-                Role = user.Role,
-                RegisteredAt = user.RegisteredAt,
-            };
-            return Ok(readDto);
+            return Ok(user);  // Ya es UserReadDto, no necesitás mapear de nuevo
         }
 
         [HttpPost]
