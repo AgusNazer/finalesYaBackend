@@ -13,6 +13,7 @@ namespace finalesYaBackend.Models
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Calendar> Calendars { get; set; }
         
                 // Configuraciones adicionales (opcional por ahora)
         protected override void OnModelCreating(ModelBuilder modelBuilder)

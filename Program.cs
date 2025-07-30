@@ -37,6 +37,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IExamService, ExamService>();
+builder.Services.AddScoped<ICalendarService, CalendarService>();
 
 // Base de datos
 builder.Services.AddDbContext<AppDbContext>(options =>
