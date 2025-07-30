@@ -1,0 +1,236 @@
+using Microsoft.EntityFrameworkCore;
+using finalesYaBackend.DTOs;
+using finalesYaBackend.Models;
+
+namespace finalesYaBackend.Services
+{
+    public class CalendarService : ICalendarService
+    {
+        private readonly AppDbContext _context;
+
+        public CalendarService(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<CalendarReadDto>> GetAllAsync()
+        {
+            var calendars = await _context.Calendars
+                .Include(c => c.User)
+                .ToListAsync();
+
+            return calendars.Select(calendar => new CalendarReadDto
+            {
+                Id = calendar.Id,
+                Title = calendar.Title,
+                StartDate = calendar.StartDate,
+                EndDate = calendar.EndDate,
+                Description = calendar.Description,
+                IsActive = calendar.IsActive,
+                CreatedAt = calendar.CreatedAt,
+                UserId = calendar.UserId,
+                UserName = calendar.User.Name
+            });
+        }
+
+        public async Task<CalendarReadDto?> GetByIdAsync(int id)
+        {
+            var calendar = await _context.Calendars
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (calendar == null) return null;
+
+            return new CalendarReadDto
+            {
+                Id = calendar.Id,
+                Title = calendar.Title,
+                StartDate = calendar.StartDate,
+                EndDate = calendar.EndDate,
+                Description = calendar.Description,
+                IsActive = calendar.IsActive,
+                CreatedAt = calendar.CreatedAt,
+                UserId = calendar.UserId,
+                UserName = calendar.User.Name
+            };
+        }
+
+        public async Task<CalendarReadDto> CreateAsync(CalendarCreateDto dto)
+        {
+            var calendar = new Calendar
+            {
+                Title = dto.Title,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                Description = dto.Description,
+                IsActive = dto.IsActive,
+                UserId = dto.UserId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Calendars.Add(calendar);
+            await _context.SaveChangesAsync();
+
+            var createdCalendar = await _context.Calendars
+                .Include(c => c.User)
+                .FirstAsync(c => c.Id == calendar.Id);
+
+            return new CalendarReadDto
+            {
+                Id = createdCalendar.Id,
+                Title = createdCalendar.Title,
+                StartDate = createdCalendar.StartDate,
+                EndDate = createdCalendar.EndDate,
+                Description = createdCalendar.Description,
+                IsActive = createdCalendar.IsActive,
+                CreatedAt = createdCalendar.CreatedAt,
+                UserId = createdCalendar.UserId,
+                UserName = createdCalendar.User.Name
+            };
+        }
+
+        public async Task<CalendarReadDto?> UpdateAsync(int id, CalendarCreateDto dto)
+        {
+            var existing = await _context.Calendars.FindAsync(id);
+            if (existing == null) return null;
+
+            existing.Title = dto.Title;
+            existing.StartDate = dto.StartDate;
+            existing.EndDate = dto.EndDate;
+            existing.Description = dto.Description;
+            existing.IsActive = dto.IsActive;
+            existing.UserId = dto.UserId;
+
+            await _context.SaveChangesAsync();
+
+            var updatedCalendar = await _context.Calendars
+                .Include(c => c.User)
+                .FirstAsync(c => c.Id == id);
+
+            return new CalendarReadDto
+            {
+                Id = updatedCalendar.Id,
+                Title = updatedCalendar.Title,
+                StartDate = updatedCalendar.StartDate,
+                EndDate = updatedCalendar.EndDate,
+                Description = updatedCalendar.Description,
+                IsActive = updatedCalendar.IsActive,
+                CreatedAt = updatedCalendar.CreatedAt,
+                UserId = updatedCalendar.UserId,
+                UserName = updatedCalendar.User.Name
+            };
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var calendar = await _context.Calendars.FindAsync(id);
+            if (calendar == null) return false;
+
+            _context.Calendars.Remove(calendar);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<IEnumerable<CalendarReadDto>> GetByUserIdAsync(int userId)
+        {
+            var calendars = await _context.Calendars
+                .Include(c => c.User)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            return calendars.Select(calendar => new CalendarReadDto
+            {
+                Id = calendar.Id,
+                Title = calendar.Title,
+                StartDate = calendar.StartDate,
+                EndDate = calendar.EndDate,
+                Description = calendar.Description,
+                IsActive = calendar.IsActive,
+                CreatedAt = calendar.CreatedAt,
+                UserId = calendar.UserId,
+                UserName = calendar.User.Name
+            });
+        }
+
+        public async Task<CalendarViewDto> GetCalendarViewAsync(int userId, int year, int month)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) throw new ArgumentException("Usuario no encontrado");
+
+            var startDate = new DateTime(year, month, 1);
+            var endDate = startDate.AddMonths(1).AddDays(-1);
+
+            var exams = await GetExamsByDateRangeAsync(userId, startDate, endDate);
+            var statistics = await GetCalendarStatisticsAsync(userId);
+
+            // Agrupar exámenes por fecha
+            var examsByDate = exams
+                .GroupBy(e => e.Date.ToString("yyyy-MM-dd"))
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            return new CalendarViewDto
+            {
+                UserId = userId,
+                UserName = user.Name,
+                Year = year,
+                Month = month,
+                ExamsByDate = examsByDate,
+                Statistics = statistics
+            };
+        }
+
+        public async Task<IEnumerable<CalendarExamDto>> GetExamsByDateRangeAsync(int userId, DateTime startDate, DateTime endDate)
+        {
+            var exams = await _context.Exams
+                .Include(e => e.Subject)
+                .Where(e => e.Subject.UserId == userId && 
+                           e.Date >= startDate && 
+                           e.Date <= endDate)
+                .OrderBy(e => e.Date)
+                .ToListAsync();
+
+            var today = DateTime.Today;
+
+            return exams.Select(exam => new CalendarExamDto
+            {
+                Id = exam.Id,
+                Type = exam.Type,
+                Date = exam.Date,
+                Location = exam.Location,
+                Passed = exam.Passed,
+                SubjectName = exam.Subject.Name,
+                SubjectMajor = exam.Subject.Major,
+                DaysRemaining = (exam.Date.Date - today).Days,
+                IsToday = exam.Date.Date == today,
+                IsOverdue = exam.Date.Date < today && exam.Passed == null
+            });
+        }
+
+        public async Task<CalendarStatistics> GetCalendarStatisticsAsync(int userId)
+        {
+            var today = DateTime.Today;
+            var weekFromNow = today.AddDays(7);
+
+            var allExams = await _context.Exams
+                .Include(e => e.Subject)
+                .Where(e => e.Subject.UserId == userId)
+                .ToListAsync();
+
+            var upcomingExams = allExams.Where(e => e.Date.Date >= today).ToList();
+            var nextExam = upcomingExams.OrderBy(e => e.Date).FirstOrDefault();
+
+            return new CalendarStatistics
+            {
+                TotalExams = allExams.Count,
+                UpcomingExams = upcomingExams.Count,
+                PassedExams = allExams.Count(e => e.Passed == true),
+                FailedExams = allExams.Count(e => e.Passed == false),
+                PendingExams = allExams.Count(e => e.Passed == null),
+                OverdueExams = allExams.Count(e => e.Date.Date < today && e.Passed == null),
+                ExamsThisWeek = allExams.Count(e => e.Date.Date >= today && e.Date.Date <= weekFromNow),
+                NextExamDate = nextExam?.Date
+            };
+        }
+    }
+}

@@ -4,6 +4,89 @@
         <name>finalesYaBackend</name>
     </assembly>
     <members>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.GetAll">
+            <summary>
+            Obtiene todos los calendarios registrados.
+            </summary>
+            <returns>Lista de todos los calendarios</returns>
+            <response code="200">Devuelve la lista de calendarios</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.GetById(System.Int32)">
+            <summary>
+            Obtiene un calendario específico por ID.
+            </summary>
+            <param name="id">ID del calendario</param>
+            <returns>Calendario con el ID especificado</returns>
+            <response code="200">Devuelve el calendario encontrado</response>
+            <response code="404">Si no se encuentra el calendario</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.GetByUserId(System.Int32)">
+            <summary>
+            Obtiene todos los calendarios de un usuario específico.
+            </summary>
+            <param name="userId">ID del usuario</param>
+            <returns>Lista de calendarios del usuario</returns>
+            <response code="200">Devuelve la lista de calendarios del usuario</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.GetCalendarView(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Obtiene la vista del calendario de un usuario por mes y año.
+            </summary>
+            <param name="userId">ID del usuario</param>
+            <param name="year">Año</param>
+            <param name="month">Mes (1-12)</param>
+            <returns>Vista del calendario con exámenes agrupados por fecha</returns>
+            <response code="200">Devuelve la vista del calendario</response>
+            <response code="400">Si los parámetros son inválidos</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.GetExamsByDateRange(System.Int32,System.DateTime,System.DateTime)">
+            <summary>
+            Obtiene exámenes de un usuario en un rango de fechas.
+            </summary>
+            <param name="userId">ID del usuario</param>
+            <param name="startDate">Fecha de inicio (formato: yyyy-MM-dd)</param>
+            <param name="endDate">Fecha de fin (formato: yyyy-MM-dd)</param>
+            <returns>Lista de exámenes en el rango especificado</returns>
+            <response code="200">Devuelve la lista de exámenes</response>
+            <response code="400">Si las fechas son inválidas</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.GetStatistics(System.Int32)">
+            <summary>
+            Obtiene las estadísticas del calendario de un usuario.
+            </summary>
+            <param name="userId">ID del usuario</param>
+            <returns>Estadísticas del calendario</returns>
+            <response code="200">Devuelve las estadísticas del calendario</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.Create(finalesYaBackend.DTOs.CalendarCreateDto)">
+            <summary>
+            Crea un nuevo calendario.
+            </summary>
+            <param name="dto">Datos del calendario a crear</param>
+            <returns>Calendario creado</returns>
+            <response code="201">Devuelve el calendario recién creado</response>
+            <response code="400">Si los datos son inválidos</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.Update(System.Int32,finalesYaBackend.DTOs.CalendarCreateDto)">
+            <summary>
+            Actualiza un calendario existente.
+            </summary>
+            <param name="id">ID del calendario a actualizar</param>
+            <param name="dto">Nuevos datos del calendario</param>
+            <returns>Calendario actualizado</returns>
+            <response code="200">Devuelve el calendario actualizado</response>
+            <response code="404">Si no se encuentra el calendario</response>
+            <response code="400">Si los datos son inválidos</response>
+        </member>
+        <member name="M:finalesYaBackend.Controllers.CalendarController.Delete(System.Int32)">
+            <summary>
+            Elimina un calendario.
+            </summary>
+            <param name="id">ID del calendario a eliminar</param>
+            <returns>Confirmación de eliminación</returns>
+            <response code="204">Calendario eliminado correctamente</response>
+            <response code="404">Si no se encuentra el calendario</response>
+        </member>
         <member name="M:finalesYaBackend.Controllers.ExamController.GetAll">
             <summary>
             Obtiene todos los exámenes registrados.
@@ -80,6 +163,85 @@
         </member>
         <member name="M:finalesYaBackend.Migrations.MakeSubjectUserOptional.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
+        </member>
+        <member name="T:finalesYaBackend.Migrations.AddCalendarModel">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.AddCalendarModel.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.AddCalendarModel.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.AddCalendarModel.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.GetAllAsync">
+            <summary>
+            Obtiene todos los calendarios registrados.
+            </summary>
+            <returns>Lista de todos los calendarios</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.GetByIdAsync(System.Int32)">
+            <summary>
+            Obtiene un calendario específico por su ID.
+            </summary>
+            <param name="id">ID del calendario</param>
+            <returns>Calendario encontrado o null si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.CreateAsync(finalesYaBackend.DTOs.CalendarCreateDto)">
+            <summary>
+            Crea un nuevo calendario para un usuario.
+            </summary>
+            <param name="dto">Datos del calendario a crear</param>
+            <returns>Calendario creado con información completa</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.UpdateAsync(System.Int32,finalesYaBackend.DTOs.CalendarCreateDto)">
+            <summary>
+            Actualiza un calendario existente.
+            </summary>
+            <param name="id">ID del calendario a actualizar</param>
+            <param name="dto">Nuevos datos del calendario</param>
+            <returns>Calendario actualizado o null si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina un calendario por su ID.
+            </summary>
+            <param name="id">ID del calendario a eliminar</param>
+            <returns>True si se eliminó correctamente, false si no existe</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.GetByUserIdAsync(System.Int32)">
+            <summary>
+            Obtiene todos los calendarios de un usuario específico.
+            </summary>
+            <param name="userId">ID del usuario</param>
+            <returns>Lista de calendarios del usuario</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.GetCalendarViewAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Obtiene la vista del calendario de un usuario por mes y año.
+            </summary>
+            <param name="userId">ID del usuario</param>
+            <param name="year">Año</param>
+            <param name="month">Mes (1-12)</param>
+            <returns>Vista del calendario con exámenes agrupados por fecha</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.GetExamsByDateRangeAsync(System.Int32,System.DateTime,System.DateTime)">
+            <summary>
+            Obtiene todos los exámenes de un usuario en un rango de fechas.
+            </summary>
+            <param name="userId">ID del usuario</param>
+            <param name="startDate">Fecha de inicio</param>
+            <param name="endDate">Fecha de fin</param>
+            <returns>Lista de exámenes en el rango especificado</returns>
+        </member>
+        <member name="M:finalesYaBackend.Services.ICalendarService.GetCalendarStatisticsAsync(System.Int32)">
+            <summary>
+            Obtiene las estadísticas del calendario de un usuario.
+            </summary>
+            <param name="userId">ID del usuario</param>
+            <returns>Estadísticas del calendario</returns>
         </member>
         <member name="M:finalesYaBackend.Services.IExamService.GetAllAsync">
             <summary>
