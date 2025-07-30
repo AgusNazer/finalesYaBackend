@@ -1,3 +1,5 @@
+
+using Microsoft.EntityFrameworkCore;
 using finalesYaBackend.DTOs;
 using finalesYaBackend.Models;
 
@@ -5,14 +7,18 @@ namespace finalesYaBackend.Services
 {
     public class SubjectService : ISubjectService
     {
-        private readonly List<Subject> _subjects = new();
-        private int _nextId = 1;
+        private readonly AppDbContext _context;
+
+        public SubjectService(AppDbContext context)
+        {
+            _context = context;
+        }
 
         public async Task<IEnumerable<SubjectReadDto>> GetAllAsync()
         {
-            await Task.Delay(1); // Simula operación asíncrona
+            var subjects = await _context.Subjects.ToListAsync();
 
-            return _subjects.Select(subject => new SubjectReadDto
+            return subjects.Select(subject => new SubjectReadDto
             {
                 Id = subject.Id,
                 Name = subject.Name,
@@ -21,12 +27,9 @@ namespace finalesYaBackend.Services
             });
         }
 
-
         public async Task<SubjectReadDto?> GetByIdAsync(int id)
         {
-            await Task.Delay(1);
-
-            var subject = _subjects.FirstOrDefault(s => s.Id == id);
+            var subject = await _context.Subjects.FindAsync(id);
             if (subject == null) return null;
 
             return new SubjectReadDto
@@ -38,20 +41,17 @@ namespace finalesYaBackend.Services
             };
         }
 
-
         public async Task<SubjectReadDto> CreateAsync(SubjectCreateDto dto)
         {
-            await Task.Delay(1);
-    
             var subject = new Subject
             {
-                Id = _nextId++,
                 Name = dto.Name,
                 Major = dto.Major,
                 YearTaken = dto.YearTaken
             };
 
-            _subjects.Add(subject);
+            _context.Subjects.Add(subject);
+            await _context.SaveChangesAsync();  // ← Guardar en la DB real
 
             return new SubjectReadDto
             {
@@ -62,17 +62,16 @@ namespace finalesYaBackend.Services
             };
         }
 
-
         public async Task<SubjectReadDto?> UpdateAsync(int id, SubjectCreateDto dto)
         {
-            await Task.Delay(1);
-
-            var existing = _subjects.FirstOrDefault(s => s.Id == id);
+            var existing = await _context.Subjects.FindAsync(id);
             if (existing == null) return null;
 
             existing.Name = dto.Name;
             existing.Major = dto.Major;
             existing.YearTaken = dto.YearTaken;
+
+            await _context.SaveChangesAsync();  // ← Guardar cambios
 
             return new SubjectReadDto
             {
@@ -83,15 +82,14 @@ namespace finalesYaBackend.Services
             };
         }
 
-
         public async Task<bool> DeleteAsync(int id)
         {
-            await Task.Delay(1);
-
-            var subject = _subjects.FirstOrDefault(s => s.Id == id);
+            var subject = await _context.Subjects.FindAsync(id);
             if (subject == null) return false;
 
-            _subjects.Remove(subject);
+            _context.Subjects.Remove(subject);
+            await _context.SaveChangesAsync();  // ← Guardar cambios
+
             return true;
         }
     }

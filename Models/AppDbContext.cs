@@ -23,6 +23,13 @@ namespace finalesYaBackend.Models
             modelBuilder.Entity<User>()
                         .HasIndex(u => u.Email)
                         .IsUnique();
+            
+            // Configurar relación opcional entre Subject y User
+            modelBuilder.Entity<Subject>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.Subjects)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.SetNull); // En lugar de Cascade
         }
 
     }
