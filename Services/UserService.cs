@@ -1,38 +1,37 @@
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 using finalesYaBackend.DTOs;
 using finalesYaBackend.Services;
 using finalesYaBackend.Models;
+// using finalesYaBackend.Data;
 
 namespace finalesYaBackend.Services
 {
     public class UserService : IUserService
     {
-        private readonly List<User> _users = new();
-        private int _nextId = 1;
+        private readonly AppDbContext _context;
+
+        public UserService(AppDbContext context)
+        {
+            _context = context;
+        }
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            // Simula operación asíncrona
-            await Task.Delay(1);
-            return _users;
+            return await _context.Users.ToListAsync();
         }
 
         public async Task<User?> GetByIdAsync(int id)
         {
-            // Simula operación asíncrona
-            await Task.Delay(1);
-            return _users.FirstOrDefault(u => u.Id == id);
+            return await _context.Users.FindAsync(id);
         }
 
         public async Task<User> CreateAsync(UserCreateDto dto)
         {
-            await Task.Delay(1);
-
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             var user = new User
             {
-                Id = _nextId++,
                 Name = dto.Name,
                 Email = dto.Email,
                 PasswordHash = hashedPassword,
@@ -41,20 +40,18 @@ namespace finalesYaBackend.Services
                 RegisteredAt = DateTime.UtcNow
             };
 
-            _users.Add(user);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();  // ← ESTO guarda en la DB real
+
             return user;
         }
 
-
         public async Task<User?> UpdateAsync(int id, User updatedUser)
         {
-            // Simula operación asíncrona
-            await Task.Delay(1);
-            
-            var existing = _users.FirstOrDefault(u => u.Id == id);
+            var existing = await _context.Users.FindAsync(id);
             if (existing == null)
             {
-                return null; // Retorna null si no existe
+                return null;
             }
 
             existing.Name = updatedUser.Name;
@@ -63,22 +60,23 @@ namespace finalesYaBackend.Services
             existing.University = updatedUser.University;
             existing.Role = updatedUser.Role;
             
-            return existing; // Retorna el usuario actualizado
+            await _context.SaveChangesAsync();  // ← Guardar cambios
+            
+            return existing;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            // Simula operación asíncrona
-            await Task.Delay(1);
-            
-            var user = _users.FirstOrDefault(u => u.Id == id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
-                return false; // Retorna false si no existe
+                return false;
             }
 
-            _users.Remove(user);
-            return true; // Retorna true si se eliminó correctamente
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();  // ← Guardar cambios
+            
+            return true;
         }
     }
 }

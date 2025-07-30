@@ -7,8 +7,8 @@ namespace finalesYaBackend.Models
         public string? Major { get; set; }
         public int? YearTaken { get; set; }
 
-        public int UserId { get; set; }
-        public User User { get; set; } = null!;
+        public int? UserId { get; set; }
+        public User? User { get; set; } = null!;
 
         public List<Exam> Exams { get; set; } = new();
         public List<Comment> Comments { get; set; } = new();
