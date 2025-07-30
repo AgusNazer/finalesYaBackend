@@ -9,21 +9,21 @@ namespace finalesYaBackend.Services // PascalCase para carpetas
         /// <summary>
         /// Devuelve todos los usuarios de forma asíncrona.
         /// </summary>
-        Task<IEnumerable<User>> GetAllAsync();
+        Task<IEnumerable<UserReadDto>> GetAllAsync();
 
         /// <summary>
         /// Devuelve un usuario por ID de forma asíncrona.
         /// </summary>
         /// <param name="id">ID del usuario</param>
         /// <returns>Usuario encontrado o null si no existe</returns>
-        Task<User?> GetByIdAsync(int id);
+        Task<UserReadDto?> GetByIdAsync(int id);
 
         /// <summary>
         /// Crea un nuevo usuario de forma asíncrona.
         /// </summary>
         /// <param name="user">Usuario a crear</param>
         /// <returns>Usuario creado</returns>
-        Task<User> CreateAsync(UserCreateDto dto);
+        Task<UserReadDto> CreateAsync(UserCreateDto dto);
 
         /// <summary>
         /// Actualiza un usuario existente de forma asíncrona.
