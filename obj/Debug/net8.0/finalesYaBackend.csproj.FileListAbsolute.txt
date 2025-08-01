@@ -1,11 +1,13 @@
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/appsettings.Development.json
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/appsettings.json
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/appsettings.Production.json
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/finalesYaBackend.staticwebassets.runtime.json
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/finalesYaBackend
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/finalesYaBackend.deps.json
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/finalesYaBackend.runtimeconfig.json
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/finalesYaBackend.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/finalesYaBackend.pdb
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/finalesYaBackend.xml
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/BCrypt.Net-Next.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Humanizer.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.Bcl.AsyncInterfaces.dll
@@ -26,8 +28,8 @@
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.Extensions.Options.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.OpenApi.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Mono.TextTemplating.dll
-/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/MySqlConnector.dll
-/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Pomelo.EntityFrameworkCore.MySql.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Npgsql.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Swashbuckle.AspNetCore.Swagger.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -112,8 +114,7 @@
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/finalesY.C8BECD9A.Up2Date
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/finalesYaBackend.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/refint/finalesYaBackend.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/finalesYaBackend.xml
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/finalesYaBackend.pdb
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/finalesYaBackend.genruntimeconfig.cache
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/ref/finalesYaBackend.dll
-/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/finalesYaBackend.xml
-/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/finalesYaBackend.xml

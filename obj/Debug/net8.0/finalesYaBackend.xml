@@ -140,6 +140,18 @@
             <response code="204">Examen eliminado correctamente</response>
             <response code="404">Si no se encuentra el examen</response>
         </member>
+        <member name="T:finalesYaBackend.Migrations.InitialCreatePostgreSQL">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.InitialCreatePostgreSQL.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.InitialCreatePostgreSQL.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:finalesYaBackend.Migrations.InitialCreatePostgreSQL.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
         <member name="T:finalesYaBackend.Migrations.InitialCreate">
             <inheritdoc />
         </member>
@@ -150,30 +162,6 @@
             <inheritdoc />
         </member>
         <member name="M:finalesYaBackend.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:finalesYaBackend.Migrations.MakeSubjectUserOptional">
-            <inheritdoc />
-        </member>
-        <member name="M:finalesYaBackend.Migrations.MakeSubjectUserOptional.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:finalesYaBackend.Migrations.MakeSubjectUserOptional.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:finalesYaBackend.Migrations.MakeSubjectUserOptional.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:finalesYaBackend.Migrations.AddCalendarModel">
-            <inheritdoc />
-        </member>
-        <member name="M:finalesYaBackend.Migrations.AddCalendarModel.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:finalesYaBackend.Migrations.AddCalendarModel.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:finalesYaBackend.Migrations.AddCalendarModel.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
         <member name="M:finalesYaBackend.Services.ICalendarService.GetAllAsync">

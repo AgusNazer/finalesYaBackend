@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "XcKWMEaxZcA=",
+  "dgSpecHash": "llgNUGhf0pU=",
   "success": true,
   "projectFilePath": "/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/finalesYaBackend.csproj",
   "expectedPackageFiles": [
@@ -31,8 +31,8 @@
     "/Users/agustinnazer/.nuget/packages/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "/Users/agustinnazer/.nuget/packages/microsoft.openapi/1.6.23/microsoft.openapi.1.6.23.nupkg.sha512",
     "/Users/agustinnazer/.nuget/packages/mono.texttemplating/2.2.1/mono.texttemplating.2.2.1.nupkg.sha512",
-    "/Users/agustinnazer/.nuget/packages/mysqlconnector/2.3.5/mysqlconnector.2.3.5.nupkg.sha512",
-    "/Users/agustinnazer/.nuget/packages/pomelo.entityframeworkcore.mysql/8.0.3/pomelo.entityframeworkcore.mysql.8.0.3.nupkg.sha512",
+    "/Users/agustinnazer/.nuget/packages/npgsql/8.0.5/npgsql.8.0.5.nupkg.sha512",
+    "/Users/agustinnazer/.nuget/packages/npgsql.entityframeworkcore.postgresql/8.0.10/npgsql.entityframeworkcore.postgresql.8.0.10.nupkg.sha512",
     "/Users/agustinnazer/.nuget/packages/swashbuckle.aspnetcore/9.0.3/swashbuckle.aspnetcore.9.0.3.nupkg.sha512",
     "/Users/agustinnazer/.nuget/packages/swashbuckle.aspnetcore.swagger/9.0.3/swashbuckle.aspnetcore.swagger.9.0.3.nupkg.sha512",
     "/Users/agustinnazer/.nuget/packages/swashbuckle.aspnetcore.swaggergen/9.0.3/swashbuckle.aspnetcore.swaggergen.9.0.3.nupkg.sha512",
