@@ -34,6 +34,20 @@ namespace finalesYaBackend.Controllers
         [HttpPost]
         public async Task<ActionResult<UserReadDto>> Create([FromBody] UserCreateDto dto)
         {
+            //validacion/error log
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState)
+                {
+                    Console.WriteLine($"Campo: {error.Key}");
+                    foreach (var subError in error.Value.Errors)
+                    {
+                        Console.WriteLine($"  - Error: {subError.ErrorMessage}");
+                    }
+                }
+
+                return BadRequest(ModelState);
+            }
             var created = await _userService.CreateAsync(dto);
 
             var readDto = new UserReadDto
