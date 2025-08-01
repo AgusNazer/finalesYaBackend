@@ -7,7 +7,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-// Configurar Swagger con documentación XML
+//CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:5173"     // Vite
+                //"http://127.0.0.1:3000",     // Alternativo localhost
+                //"https://tudominio.com"      // Producción 
+            )
+            .AllowAnyMethod()                // GET, POST, PUT, DELETE
+            .AllowAnyHeader()                // Authorization, Content-Type
+            .AllowCredentials();             // Para autenticación
+    });
+});
+
+// Swagger con documentación XML
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo 
@@ -46,6 +62,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     )
 );
+//docker config
+// Configuración del puerto para Render
+builder.WebHost.UseKestrel(options =>
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+    options.ListenAnyIP(int.Parse(port));
+});
 
 var app = builder.Build();
 
@@ -58,9 +81,12 @@ app.UseSwaggerUI(c =>
     c.DocumentTitle = "Finales Ya API - Documentación";
 });
 
-app.UseHttpsRedirection();
+
+app.UseHttpsRedirection();// comentar en produccion
 app.UseStaticFiles();
 app.UseRouting();
+//cors
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();
 
