@@ -3,8 +3,20 @@ using finalesYaBackend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
+using DotNetEnv;
+
+DotNetEnv.Env.Load();
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Construir connection string directamente
+var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                       $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                       $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
+                       $"Username={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
+                       $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
+                       $"SslMode=Require;";
 
 builder.Services.AddControllers();
 
@@ -66,10 +78,9 @@ builder.Services.AddScoped<ICalendarService, CalendarService>();
 
 //Base de datos postgres
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
+    options.UseNpgsql(connectionString)
 );
+
 
 //docker config
 // Configuración del puerto para Render
