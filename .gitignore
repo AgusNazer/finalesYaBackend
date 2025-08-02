@@ -1,0 +1,15 @@
+# Variables de entorno
+.env
+
+# Build outputs
+bin/
+obj/
+
+# User files
+*.user
+.vs/
+.idea/
+.vscode/
+
+# OS
+.DS_Store
