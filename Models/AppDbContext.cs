@@ -1,15 +1,16 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 // using finalesYaBackend.Models;
 
 namespace finalesYaBackend.Models
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<Usuario>
     {
         // Constructor
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // DbSets (tablas)
-        public DbSet<Usuario> Users { get; set; }
+        // DbSets (tablas) //user ya lo maneja idendtity como "usuario"
+        // public DbSet<Usuario> Users { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<Comment> Comments { get; set; }

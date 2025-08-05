@@ -120,3 +120,4 @@
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/obj/Debug/net8.0/ref/finalesYaBackend.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/DotNetEnv.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Sprache.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
