@@ -24,12 +24,13 @@ namespace finalesYaBackend.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserReadDto>> GetById(int id)
+        public async Task<ActionResult<UserReadDto>> GetById(string id)
         {
             var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
-            return Ok(user);  // Ya es UserReadDto, no necesitás mapear de nuevo
+            return Ok(user);
         }
+
 
         [HttpPost]
         public async Task<ActionResult<UserReadDto>> Create([FromBody] UserCreateDto dto)
@@ -65,31 +66,35 @@ namespace finalesYaBackend.Controllers
 
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] User user)
+        public async Task<IActionResult> Update(string id, [FromBody] UserUpdateDto dto)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                _userService.UpdateAsync(id, user);
-                return NoContent();
+                return BadRequest(ModelState);
             }
-            catch (KeyNotFoundException)
+
+            var updatedUser = await _userService.UpdateAsync(id, dto);
+
+            if (updatedUser == null)
             {
                 return NotFound();
             }
+
+            return Ok(updatedUser); // Podés devolver 204 NoContent si preferís
         }
 
+
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
-            try
-            {
-                _userService.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
+            var deleted = await _userService.DeleteAsync(id);
+            if (!deleted)
             {
                 return NotFound();
             }
+
+            return NoContent();
         }
+
     }
 }

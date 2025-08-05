@@ -2,7 +2,7 @@ namespace finalesYaBackend.DTOs
 {
     public class CalendarViewDto
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string UserName { get; set; } = null!;
         public int Year { get; set; }
         public int Month { get; set; }

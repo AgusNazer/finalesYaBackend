@@ -2,7 +2,7 @@ namespace finalesYaBackend.Models;
 
 public class Calendar
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
     public string Title { get; set; } = null!;
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
@@ -11,8 +11,8 @@ public class Calendar
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Relaciones
-    public int UserId { get; set; }
-    public User User { get; set; } = null!;
+    public string UsuarioId { get; set; }
+    public Usuario Usuario { get; set; } = null!;
         
     // Un calendario puede tener múltiples exámenes asociados
     public List<Exam> Exams { get; set; } = new();

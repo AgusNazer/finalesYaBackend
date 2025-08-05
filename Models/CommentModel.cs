@@ -10,6 +10,6 @@ namespace finalesYaBackend.Models
         public Subject Subject { get; set; } = null!;
 
         public int UserId { get; set; }
-        public User User { get; set; } = null!;
+        public Usuario Usuario { get; set; } = null!;
     }
 }

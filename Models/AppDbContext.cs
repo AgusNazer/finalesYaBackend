@@ -9,7 +9,7 @@ namespace finalesYaBackend.Models
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         // DbSets (tablas)
-        public DbSet<User> Users { get; set; }
+        public DbSet<Usuario> Users { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -21,15 +21,15 @@ namespace finalesYaBackend.Models
             base.OnModelCreating(modelBuilder);
 
             // Example: Unique Email constraint (redundante si ya lo hiciste con data annotations)
-            modelBuilder.Entity<User>()
+            modelBuilder.Entity<Usuario>()
                         .HasIndex(u => u.Email)
                         .IsUnique();
             
             // Configurar relación opcional entre Subject y User
             modelBuilder.Entity<Subject>()
-                .HasOne(s => s.User)
+                .HasOne(s => s.Usuario)
                 .WithMany(u => u.Subjects)
-                .HasForeignKey(s => s.UserId)
+                .HasForeignKey(s => s.UsuarioId)
                 .OnDelete(DeleteBehavior.SetNull); // En lugar de Cascade
         }
 
