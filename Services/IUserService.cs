@@ -16,7 +16,7 @@ namespace finalesYaBackend.Services // PascalCase para carpetas
         /// </summary>
         /// <param name="id">ID del usuario</param>
         /// <returns>Usuario encontrado o null si no existe</returns>
-        Task<UserReadDto?> GetByIdAsync(int id);
+        Task<UserReadDto?> GetByIdAsync(string id);
 
         /// <summary>
         /// Crea un nuevo usuario de forma asíncrona.
@@ -31,13 +31,13 @@ namespace finalesYaBackend.Services // PascalCase para carpetas
         /// <param name="id">ID del usuario a actualizar</param>
         /// <param name="user">Datos del usuario actualizado</param>
         /// <returns>Usuario actualizado o null si no existe</returns>
-        Task<User?> UpdateAsync(int id, User user);
+        Task<UserReadDto?> UpdateAsync(string id, UserUpdateDto dto);
 
         /// <summary>
         /// Elimina un usuario por ID de forma asíncrona.
         /// </summary>
         /// <param name="id">ID del usuario a eliminar</param>
         /// <returns>True si se eliminó correctamente, false si no existe</returns>
-        Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAsync(string id);
     }
 }

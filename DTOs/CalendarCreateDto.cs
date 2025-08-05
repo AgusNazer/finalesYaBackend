@@ -8,6 +8,6 @@ namespace finalesYaBackend.DTOs
         public DateTime? EndDate { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; } = true;
-        public int UserId { get; set; }
+        public string UsuarioId { get; set; }
     }
 }
