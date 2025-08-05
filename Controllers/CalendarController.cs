@@ -38,7 +38,7 @@ namespace finalesYaBackend.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CalendarReadDto>> GetById(int id)
+        public async Task<ActionResult<CalendarReadDto>> GetById(string id)
         {
             var calendar = await _calendarService.GetByIdAsync(id);
             if (calendar == null) return NotFound();
@@ -53,7 +53,7 @@ namespace finalesYaBackend.Controllers
         /// <response code="200">Devuelve la lista de calendarios del usuario</response>
         [HttpGet("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<CalendarReadDto>>> GetByUserId(int userId)
+        public async Task<ActionResult<IEnumerable<CalendarReadDto>>> GetByUserId(string userId)
         {
             var calendars = await _calendarService.GetByUserIdAsync(userId);
             return Ok(calendars);
@@ -71,7 +71,7 @@ namespace finalesYaBackend.Controllers
         [HttpGet("user/{userId}/view/{year}/{month}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CalendarViewDto>> GetCalendarView(int userId, int year, int month)
+        public async Task<ActionResult<CalendarViewDto>> GetCalendarView(string userId, int year, int month)
         {
             if (month < 1 || month > 12)
                 return BadRequest("El mes debe estar entre 1 y 12");
@@ -100,7 +100,7 @@ namespace finalesYaBackend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<CalendarExamDto>>> GetExamsByDateRange(
-            int userId, 
+            string userId, 
             [FromQuery] DateTime startDate, 
             [FromQuery] DateTime endDate)
         {
@@ -119,7 +119,7 @@ namespace finalesYaBackend.Controllers
         /// <response code="200">Devuelve las estadísticas del calendario</response>
         [HttpGet("user/{userId}/statistics")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<CalendarStatistics>> GetStatistics(int userId)
+        public async Task<ActionResult<CalendarStatistics>> GetStatistics(string userId)
         {
             var statistics = await _calendarService.GetCalendarStatisticsAsync(userId);
             return Ok(statistics);
@@ -154,7 +154,7 @@ namespace finalesYaBackend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CalendarReadDto>> Update(int id, [FromBody] CalendarCreateDto dto)
+        public async Task<ActionResult<CalendarReadDto>> Update(string id, [FromBody] CalendarCreateDto dto)
         {
             var updated = await _calendarService.UpdateAsync(id, dto);
             if (updated == null) return NotFound();
@@ -171,7 +171,7 @@ namespace finalesYaBackend.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var deleted = await _calendarService.DeleteAsync(id);
             if (!deleted) return NotFound();

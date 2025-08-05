@@ -2,6 +2,15 @@ using finalesYaBackend.Models;
 using finalesYaBackend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
+//las siguientes packages instalarlos
+// using Microsoft.AspNetCore.Authentication.JwtBearer;
+// using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using DotNetEnv;
 
@@ -35,6 +44,22 @@ builder.Services.AddCors(options =>
             .AllowCredentials();             // Para autenticación
     });
 });
+
+// builder.Services.AddIdentity<Usuario, IdentityRole>()
+//     .AddEntityFrameworkStores<AppDbContext>()
+//     .AddDefaultTokenProviders();
+builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 6;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+    // .AddDefaultTokenProviders();
+
 
 // Swagger con documentación XML
 builder.Services.AddSwaggerGen(c =>
@@ -90,7 +115,49 @@ builder.WebHost.UseKestrel(options =>
     options.ListenAnyIP(int.Parse(port));
 });
 
+// Método para crear roles y admin inicial
+static async Task SeedRoles(IServiceProvider serviceProvider)
+{
+    // Obtengo los managers para manejar roles y usuarios
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
+
+    // Crear roles si no existen
+    if (!await roleManager.RoleExistsAsync("User"))
+        await roleManager.CreateAsync(new IdentityRole("User"));
+    
+    if (!await roleManager.RoleExistsAsync("Admin"))
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+    // Crear admin por defecto si no existe
+    var adminEmail = "admin@finalesya.com";
+    if (await userManager.FindByEmailAsync(adminEmail) == null)
+    {
+        var admin = new Usuario
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            Name = "Admin",
+            University = "Sistema",
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(admin, "Admin123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(admin, "Admin");
+        }
+    }
+}
+
 var app = builder.Build();
+
+// Seed roles al iniciar la aplicación
+using (var scope = app.Services.CreateScope())
+{
+    await SeedRoles(scope.ServiceProvider);
+}
+
 
 // Configurar Swagger UI
 app.UseSwagger();
@@ -107,6 +174,7 @@ app.UseStaticFiles();
 app.UseRouting();
 //cors
 app.UseCors("AllowFrontend");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

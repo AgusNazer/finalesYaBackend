@@ -129,6 +129,7 @@ namespace finalesYaBackend.Services
 
         public async Task<IEnumerable<UserReadDto>> GetAllAsync()
         {
+            Console.WriteLine("🔍 Llegó al controller GetAll()");
             var users = await _userManager.Users.ToListAsync();
 
             return users.Select(user => new UserReadDto
