@@ -121,3 +121,11 @@
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/DotNetEnv.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Sprache.dll
 /Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.IdentityModel.Logging.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
+/Users/agustinnazer/Desktop/CSharp/finales_ya/backend/finalesYaBackend/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll

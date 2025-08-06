@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using finalesYaBackend.Models;
 using finalesYaBackend.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using finalesYaBackend.Services;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -11,16 +14,23 @@ public class AuthController : ControllerBase
     private readonly UserManager<Usuario> _userManager;
     private readonly SignInManager<Usuario> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IJwtService _jwtService;
+
 
     public AuthController(
         UserManager<Usuario> userManager, 
         SignInManager<Usuario> signInManager,
-        RoleManager<IdentityRole> roleManager)
+        RoleManager<IdentityRole> roleManager,
+        IJwtService jwtService
+        )
+        
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
+        _jwtService = jwtService;
     }
+    
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
@@ -28,20 +38,27 @@ public class AuthController : ControllerBase
         try
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
+
             if (user == null)
                 return Unauthorized(new { success = false, message = "Usuario no encontrado" });
 
             var passwordCheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+
             if (!passwordCheck)
                 return Unauthorized(new { success = false, message = "Contraseña incorrecta" });
 
-            // Login manual (sin SignInManager que se cuelga)
+            // Si querés evitar el bug de GetRolesAsync(), podés pasar una lista vacía temporalmente
+            // var roles = new List<string>(); // <- evitar llamada problemática
+
+            // O si estás seguro que no se cuelga más, descomentá:
             var roles = await _userManager.GetRolesAsync(user);
-        
+
+            var token = _jwtService.GenerateToken(user, roles);
+
             return Ok(new
             {
                 success = true,
-                message = "Login exitoso",
+                token,
                 user = new
                 {
                     user.Id,
@@ -57,6 +74,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { success = false, message = $"Error: {ex.Message}" });
         }
     }
+
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)

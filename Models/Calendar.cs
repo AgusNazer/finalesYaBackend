@@ -2,7 +2,7 @@ namespace finalesYaBackend.Models;
 
 public class Calendar
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public string Title { get; set; } = null!;
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
