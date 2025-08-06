@@ -1,6 +1,6 @@
 # FinalesYa 📚
 
-**FinalesYa** es una aplicación web pensada para estudiantes universitarios de Argentina. Su objetivo es facilitar la organización de materias, parciales y finales, con herramientas útiles como cuenta regresiva, historial de exámenes y comentarios de otros usuarios.
+**FinalesYa** es una aplicación web pensada para estudiantes universitarios. Su objetivo es facilitar la organización de materias, parciales y finales, con herramientas útiles como cuenta regresiva, historial de exámenes y comentarios de otros usuarios.
 
 ## ✨ Funcionalidades
 
@@ -14,17 +14,17 @@
 ## 🧱 Tecnologías
 
 - Backend: ASP.NET Core + Entity Framework Core
-- Base de datos: MySQL
-- Frontend: HTML/CSS (Bootstrap) y React (en desarrollo)
-- ORM: Pomelo Entity Framework Core para MySQL
+- Base de datos: PostgreSql
+- Frontend: React-Vite
+- ORM: Entity Framework Core (EF Core)
 
 ## 🚧 Estado del proyecto
 
-Proyecto en desarrollo inicial. Próximamente se integrarán autenticación, control de roles y vistas dinámicas con React.
+Proyecto en desarrollo del MVP. 
 
 ## 📌 Objetivo
 
-Simplificar la vida académica de estudiantes argentinos con una app liviana, rápida y útil para planificar exámenes y compartir experiencias entre compañeros.
+Simplificar la vida académica de estudiantes con una app liviana, rápida y útil para planificar exámenes y compartir experiencias entre compañeros.
 
 ---
 👨‍💻 Desarrollado por Agustín Nazer
