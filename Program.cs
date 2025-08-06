@@ -25,7 +25,9 @@ var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};
                        $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
                        $"Username={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
                        $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
-                       $"SslMode=Require;";
+                       $"SslMode=Require;" +
+                       $"CommandTimeout=120;" +          
+                       $"Timeout=120;";
 
 builder.Services.AddControllers();
 
@@ -36,8 +38,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:5173"     // Vite
-                //"http://127.0.0.1:3000",     // Alternativo localhost
-                //"https://tudominio.com"      // Producción 
+                //"https://xxxx"      // Producción 
+                
             )
             .AllowAnyMethod()                // GET, POST, PUT, DELETE
             .AllowAnyHeader()                // Authorization, Content-Type
@@ -158,10 +160,10 @@ var app = builder.Build();
 
 // Seed roles al iniciar la aplicación
 //comento para probar el deplot
-// using (var scope = app.Services.CreateScope())
-// {
-//     await SeedRoles(scope.ServiceProvider);
-// }
+using (var scope = app.Services.CreateScope())
+{
+    await SeedRoles(scope.ServiceProvider);
+}
 
 
 // Configurar Swagger UI
