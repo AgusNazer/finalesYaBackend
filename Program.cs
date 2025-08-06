@@ -174,7 +174,7 @@ app.UseSwaggerUI(c =>
 });
 
 
-app.UseHttpsRedirection();// comentar en produccion
+// app.UseHttpsRedirection();// comentar en produccion
 app.UseStaticFiles();
 app.UseRouting();
 //cors
