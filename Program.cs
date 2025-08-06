@@ -115,6 +115,9 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 //     var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
 //     options.ListenAnyIP(int.Parse(port));
 // });
+//port para render
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Método para crear roles y admin inicial
 static async Task SeedRoles(IServiceProvider serviceProvider)
