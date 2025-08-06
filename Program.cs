@@ -60,7 +60,6 @@ builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
     .AddEntityFrameworkStores<AppDbContext>();
     // .AddDefaultTokenProviders();
 
-
 // Swagger con documentación XML
 builder.Services.AddSwaggerGen(c =>
 {
@@ -106,6 +105,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString)
 );
 
+//configurar timezone
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 //docker config
 // Configuración del puerto para Render
