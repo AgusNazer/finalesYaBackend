@@ -6,8 +6,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 //las siguientes packages instalarlos
-// using Microsoft.AspNetCore.Authentication.JwtBearer;
-// using Microsoft.IdentityModel.Tokens;
+ using Microsoft.AspNetCore.Authentication.JwtBearer;
+ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 
@@ -61,6 +61,28 @@ builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
     // .AddDefaultTokenProviders();
+
+    builder.Services.AddScoped<IJwtService, JwtService>();
+    builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!))
+            };
+        });
+
 
 // Swagger con documentación XML
 builder.Services.AddSwaggerGen(c =>
