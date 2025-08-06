@@ -25,19 +25,37 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        var result = await _signInManager.PasswordSignInAsync(
-            loginDto.Email, 
-            loginDto.Password, 
-            false, 
-            false);
-
-        if (result.Succeeded)
+        try
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            return Ok(new { success = true, message = "Login exitoso", user.Email });
-        }
+            if (user == null)
+                return Unauthorized(new { success = false, message = "Usuario no encontrado" });
 
-        return Unauthorized(new { success = false, message = "Credenciales incorrectas" });
+            var passwordCheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+            if (!passwordCheck)
+                return Unauthorized(new { success = false, message = "Contraseña incorrecta" });
+
+            // Login manual (sin SignInManager que se cuelga)
+            var roles = await _userManager.GetRolesAsync(user);
+        
+            return Ok(new
+            {
+                success = true,
+                message = "Login exitoso",
+                user = new
+                {
+                    user.Id,
+                    user.Email,
+                    user.Name,
+                    user.University,
+                    roles
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { success = false, message = $"Error: {ex.Message}" });
+        }
     }
 
     [HttpPost("register")]
