@@ -163,10 +163,10 @@ app.MapGet("/", () => "FinalesYa API is running! 🚀");
 
 // Seed roles al iniciar la aplicación
 //comento para probar el deplot
-using (var scope = app.Services.CreateScope())
-{
-    await SeedRoles(scope.ServiceProvider);
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     await SeedRoles(scope.ServiceProvider);
+// }
 
 
 // Configurar Swagger UI
