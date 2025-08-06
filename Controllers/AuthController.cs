@@ -68,6 +68,7 @@ public class AuthController : ControllerBase
     
         return Ok(new
         {
+            user.Id,
             user.Email,
             user.Name,
             user.University,
