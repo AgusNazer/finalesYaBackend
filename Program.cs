@@ -158,6 +158,9 @@ static async Task SeedRoles(IServiceProvider serviceProvider)
 
 var app = builder.Build();
 
+// Agregar health check en la raíz
+app.MapGet("/", () => "FinalesYa API is running! 🚀");
+
 // Seed roles al iniciar la aplicación
 //comento para probar el deplot
 using (var scope = app.Services.CreateScope())
