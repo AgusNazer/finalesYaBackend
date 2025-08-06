@@ -154,10 +154,11 @@ static async Task SeedRoles(IServiceProvider serviceProvider)
 var app = builder.Build();
 
 // Seed roles al iniciar la aplicación
-using (var scope = app.Services.CreateScope())
-{
-    await SeedRoles(scope.ServiceProvider);
-}
+//comento para probar el deplot
+// using (var scope = app.Services.CreateScope())
+// {
+//     await SeedRoles(scope.ServiceProvider);
+// }
 
 
 // Configurar Swagger UI
