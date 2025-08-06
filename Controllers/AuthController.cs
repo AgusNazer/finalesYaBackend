@@ -10,11 +10,16 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<Usuario> _userManager;
     private readonly SignInManager<Usuario> _signInManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public AuthController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
+    public AuthController(
+        UserManager<Usuario> userManager, 
+        SignInManager<Usuario> signInManager,
+        RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
     }
 
     [HttpPost("login")]
@@ -82,5 +87,58 @@ public class AuthController : ControllerBase
     {
         await _signInManager.SignOutAsync(); // ← La línea mágica
         return Ok(new { success = true, message = "Logout exitoso" });
+    }
+    
+    //crear roles
+    [HttpPost("create-roles")]
+    public async Task<IActionResult> CreateRoles()
+    {
+        try
+        {
+            // Crear roles si no existen
+            if (!await _roleManager.RoleExistsAsync("User"))
+            {
+                await _roleManager.CreateAsync(new IdentityRole("User"));
+            }
+        
+            if (!await _roleManager.RoleExistsAsync("Admin"))
+            {
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+
+            // Crear admin por defecto si no existe
+            var adminEmail = "admin@finalesya.com";
+            var existingAdmin = await _userManager.FindByEmailAsync(adminEmail);
+        
+            if (existingAdmin == null)
+            {
+                var admin = new Usuario
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    Name = "Admin",
+                    University = "Sistema",
+                    EmailConfirmed = true
+                };
+
+                var result = await _userManager.CreateAsync(admin, "Admin123!");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(admin, "Admin");
+                }
+            }
+
+            return Ok(new { 
+                success = true, 
+                message = "Roles y usuario admin creados correctamente" 
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { 
+                success = false, 
+                message = $"Error: {ex.Message}" 
+            });
+        }
     }
 }
