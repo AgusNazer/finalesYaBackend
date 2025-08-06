@@ -110,11 +110,11 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 //docker config
 // Configuración del puerto para Render
-builder.WebHost.UseKestrel(options =>
-{
-    var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
-    options.ListenAnyIP(int.Parse(port));
-});
+// builder.WebHost.UseKestrel(options =>
+// {
+//     var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+//     options.ListenAnyIP(int.Parse(port));
+// });
 
 // Método para crear roles y admin inicial
 static async Task SeedRoles(IServiceProvider serviceProvider)
