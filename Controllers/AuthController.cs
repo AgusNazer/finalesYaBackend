@@ -141,4 +141,35 @@ public class AuthController : ControllerBase
             });
         }
     }
+    //test login 
+    [HttpPost("test-login")]
+    public async Task<IActionResult> TestLogin([FromBody] LoginDto loginDto)
+    {
+        try 
+        {
+            Console.WriteLine($"🔍 Intentando login con: {loginDto.Email}");
+        
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            Console.WriteLine($"🔍 Usuario encontrado: {user != null}");
+        
+            if (user != null)
+            {
+                var passwordCheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+                Console.WriteLine($"🔍 Password correcto: {passwordCheck}");
+            
+                return Ok(new { 
+                    userExists = true, 
+                    passwordCorrect = passwordCheck,
+                    user = new { user.Email, user.Name }
+                });
+            }
+        
+            return Ok(new { userExists = false });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error: {ex.Message}");
+            return BadRequest($"Error: {ex.Message}");
+        }
+    }
 }
