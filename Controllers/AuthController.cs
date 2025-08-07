@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using finalesYaBackend.Models;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using finalesYaBackend.Services;
+using Npgsql;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -15,6 +17,7 @@ public class AuthController : ControllerBase
     private readonly SignInManager<Usuario> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IJwtService _jwtService;
+    // private readonly string _connectionString;
 
 
     public AuthController(
@@ -22,6 +25,7 @@ public class AuthController : ControllerBase
         SignInManager<Usuario> signInManager,
         RoleManager<IdentityRole> roleManager,
         IJwtService jwtService
+        // IConfiguration configuration
         )
         
     {
@@ -29,50 +33,118 @@ public class AuthController : ControllerBase
         _signInManager = signInManager;
         _roleManager = roleManager;
         _jwtService = jwtService;
+        // _connectionString = configuration.GetConnectionString("DefaultConnection");
     }
     
 
+    // [HttpPost("login")]
+    // public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    // {
+    //     try
+    //     {
+    //         var user = await _userManager.FindByEmailAsync(loginDto.Email);
+    //
+    //         if (user == null)
+    //             return Unauthorized(new { success = false, message = "Usuario no encontrado" });
+    //
+    //         var passwordCheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+    //
+    //         if (!passwordCheck)
+    //             return Unauthorized(new { success = false, message = "Contraseña incorrecta" });
+    //
+    //         // Si querés evitar el bug de GetRolesAsync(), podés pasar una lista vacía temporalmente
+    //         // var roles = new List<string>(); // <- evitar llamada problemática
+    //
+    //         // O si estás seguro que no se cuelga más, descomentá:
+    //         var roles = await _userManager.GetRolesAsync(user);
+    //
+    //         var token = _jwtService.GenerateToken(user, roles);
+    //
+    //         return Ok(new
+    //         {
+    //             success = true,
+    //             token,
+    //             user = new
+    //             {
+    //                 user.Id,
+    //                 user.Email,
+    //                 user.Name,
+    //                 user.University,
+    //                 roles
+    //             }
+    //         });
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return BadRequest(new { success = false, message = $"Error: {ex.Message}" });
+    //     }
+    // }
+    
+    //nuevo login para que no se cuelgue 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
         try
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-
             if (user == null)
                 return Unauthorized(new { success = false, message = "Usuario no encontrado" });
 
             var passwordCheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-
             if (!passwordCheck)
                 return Unauthorized(new { success = false, message = "Contraseña incorrecta" });
 
-            // Si querés evitar el bug de GetRolesAsync(), podés pasar una lista vacía temporalmente
-            // var roles = new List<string>(); // <- evitar llamada problemática
-
-            // O si estás seguro que no se cuelga más, descomentá:
-            var roles = await _userManager.GetRolesAsync(user);
-
+            //  Query directa optimizada para obtener roles
+            var roles = await GetUserRolesOptimized(user.Id);
+        
             var token = _jwtService.GenerateToken(user, roles);
 
             return Ok(new
             {
                 success = true,
                 token,
-                user = new
-                {
-                    user.Id,
-                    user.Email,
-                    user.Name,
-                    user.University,
-                    roles
-                }
+                user = new { user.Id, user.Email, user.Name, user.University, roles }
             });
         }
         catch (Exception ex)
         {
             return BadRequest(new { success = false, message = $"Error: {ex.Message}" });
         }
+    }
+
+//  Metodo optimizado para obtener roles
+    private async Task<IList<string>> GetUserRolesOptimized(string userId)
+    {
+        // Usar el mismo método que usas en Program.cs
+        var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                               $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                               $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
+                               $"Username={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
+                               $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
+                               $"SslMode=Require;" +
+                               $"CommandTimeout=120;" +
+                               $"Timeout=120;";
+        using var connection = new NpgsqlConnection(connectionString);
+        await connection.OpenAsync();
+    
+        var query = @"
+        SELECT r.""Name""
+        FROM ""AspNetUserRoles"" ur
+        INNER JOIN ""AspNetRoles"" r ON ur.""RoleId"" = r.""Id""
+        WHERE ur.""UserId"" = @userId";
+    
+        using var command = new NpgsqlCommand(query, connection);
+        command.Parameters.AddWithValue("userId", userId);
+    
+        var roles = new List<string>();
+        using var reader = await command.ExecuteReaderAsync();
+    
+        while (await reader.ReadAsync())
+        {
+            roles.Add(reader.GetString("Name"));
+        }
+    
+        return roles;
     }
 
 
