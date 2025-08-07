@@ -86,6 +86,7 @@ public class AuthController : ControllerBase
     {
         try
         {
+            
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
                 return Unauthorized(new { success = false, message = "Usuario no encontrado" });
@@ -115,36 +116,50 @@ public class AuthController : ControllerBase
 //  Metodo optimizado para obtener roles
     private async Task<IList<string>> GetUserRolesOptimized(string userId)
     {
-        // Usar el mismo método que usas en Program.cs
-        var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
-                               $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
-                               $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
-                               $"Username={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
-                               $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
-                               $"SslMode=Require;" +
-                               $"CommandTimeout=120;" +
-                               $"Timeout=120;";
-        using var connection = new NpgsqlConnection(connectionString);
-        await connection.OpenAsync();
-    
-        var query = @"
-        SELECT r.""Name""
-        FROM ""AspNetUserRoles"" ur
-        INNER JOIN ""AspNetRoles"" r ON ur.""RoleId"" = r.""Id""
-        WHERE ur.""UserId"" = @userId";
-    
-        using var command = new NpgsqlCommand(query, connection);
-        command.Parameters.AddWithValue("userId", userId);
-    
-        var roles = new List<string>();
-        using var reader = await command.ExecuteReaderAsync();
-    
-        while (await reader.ReadAsync())
+        try 
         {
-            roles.Add(reader.GetString("Name"));
+            Console.WriteLine($"🔍 A. Iniciando roles para userId: {userId}"); // ← Corregir aquí
+        
+            var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                                   $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                                   $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
+                                   $"Username={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
+                                   $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
+                                   $"SslMode=Require;" +
+                                   $"CommandTimeout=120;" +
+                                   $"Timeout=120;";
+        
+            Console.WriteLine("🔍 B. Connection string creado");
+        
+            using var connection = new NpgsqlConnection(connectionString);
+            Console.WriteLine("🔍 C. Conexión creada");
+        
+            await connection.OpenAsync();
+            Console.WriteLine("🔍 D. Conexión abierta");
+        
+            var query = @"SELECT r.""Name"" FROM ""AspNetUserRoles"" ur INNER JOIN ""AspNetRoles"" r ON ur.""RoleId"" = r.""Id"" WHERE ur.""UserId"" = @userId";
+        
+            using var command = new NpgsqlCommand(query, connection);
+            command.Parameters.AddWithValue("userId", userId);
+            Console.WriteLine("🔍 E. Query preparado");
+        
+            var roles = new List<string>();
+            using var reader = await command.ExecuteReaderAsync();
+            Console.WriteLine("🔍 F. Reader ejecutado");
+        
+            while (await reader.ReadAsync())
+            {
+                roles.Add(reader.GetString("Name"));
+            }
+        
+            Console.WriteLine($"🔍 G. Roles encontrados: {string.Join(", ", roles)}");
+            return roles;
         }
-    
-        return roles;
+        catch (Exception ex)
+        {
+            Console.WriteLine($"💥 ERROR en GetUserRolesOptimized: {ex.Message}");
+            throw;
+        }
     }
 
 
