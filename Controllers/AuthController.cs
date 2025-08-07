@@ -7,25 +7,29 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using finalesYaBackend.Services;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+    
     private readonly UserManager<Usuario> _userManager;
     private readonly SignInManager<Usuario> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IJwtService _jwtService;
     // private readonly string _connectionString;
+    private readonly AppDbContext _context;
 
 
     public AuthController(
         UserManager<Usuario> userManager, 
         SignInManager<Usuario> signInManager,
         RoleManager<IdentityRole> roleManager,
-        IJwtService jwtService
+        IJwtService jwtService,
         // IConfiguration configuration
+        AppDbContext context
         )
         
     {
@@ -33,6 +37,7 @@ public class AuthController : ControllerBase
         _signInManager = signInManager;
         _roleManager = roleManager;
         _jwtService = jwtService;
+        _context = context;
         // _connectionString = configuration.GetConnectionString("DefaultConnection");
     }
     
@@ -118,42 +123,16 @@ public class AuthController : ControllerBase
     {
         try 
         {
-            Console.WriteLine($"🔍 A. Iniciando roles para userId: {userId}"); // ← Corregir aquí
+            Console.WriteLine($"🔍 A. Iniciando roles EF para userId: {userId}");
         
-            var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
-                                   $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
-                                   $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
-                                   $"Username={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
-                                   $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
-                                   $"SslMode=Require;" +
-                                   $"CommandTimeout=120;" +
-                                   $"Timeout=120;";
-        
-            Console.WriteLine("🔍 B. Connection string creado");
-        
-            using var connection = new NpgsqlConnection(connectionString);
-            Console.WriteLine("🔍 C. Conexión creada");
-        
-            await connection.OpenAsync();
-            Console.WriteLine("🔍 D. Conexión abierta");
-        
-            var query = @"SELECT r.""Name"" FROM ""AspNetUserRoles"" ur INNER JOIN ""AspNetRoles"" r ON ur.""RoleId"" = r.""Id"" WHERE ur.""UserId"" = @userId";
-        
-            using var command = new NpgsqlCommand(query, connection);
-            command.Parameters.AddWithValue("userId", userId);
-            Console.WriteLine("🔍 E. Query preparado");
-        
-            var roles = new List<string>();
-            using var reader = await command.ExecuteReaderAsync();
-            Console.WriteLine("🔍 F. Reader ejecutado");
-        
-            while (await reader.ReadAsync())
-            {
-                roles.Add(reader.GetString("Name"));
-            }
-        
-            Console.WriteLine($"🔍 G. Roles encontrados: {string.Join(", ", roles)}");
-            return roles;
+            // ✅ Usar EF Core en lugar de conexión manual
+            var roleNames = await _context.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
+                .ToListAsync();
+            
+            Console.WriteLine($"🔍 B. Roles EF encontrados: {string.Join(", ", roleNames)}");
+            return roleNames;
         }
         catch (Exception ex)
         {
