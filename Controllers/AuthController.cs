@@ -81,7 +81,7 @@ public class AuthController : ControllerBase
     // }
     
     //nuevo login para que no se cuelgue 
-    [HttpPost("login")]
+    [HttpPost("authenticate")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
         try
