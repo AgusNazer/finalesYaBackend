@@ -86,59 +86,79 @@ public class AuthController : ControllerBase
     // }
     
     //nuevo login para que no se cuelgue 
+//     [HttpPost("authenticate")]
+//     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+//     {
+//         try
+//         {
+//             
+//             var user = await _userManager.FindByEmailAsync(loginDto.Email);
+//             if (user == null)
+//                 return Unauthorized(new { success = false, message = "Usuario no encontrado" });
+//
+//             var passwordCheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+//             if (!passwordCheck)
+//                 return Unauthorized(new { success = false, message = "Contraseña incorrecta" });
+//
+//             //  Query directa optimizada para obtener roles
+//             var roles = await GetUserRolesOptimized(user.Id);
+//         
+//             var token = _jwtService.GenerateToken(user, roles);
+//
+//             return Ok(new
+//             {
+//                 success = true,
+//                 token,
+//                 user = new { user.Id, user.Email, user.Name, user.University, roles }
+//             });
+//         }
+//         catch (Exception ex)
+//         {
+//             return BadRequest(new { success = false, message = $"Error: {ex.Message}" });
+//         }
+//     }
+//
+// //  Metodo optimizado para obtener roles
+//     private async Task<IList<string>> GetUserRolesOptimized(string userId)
+//     {
+//         try 
+//         {
+//             Console.WriteLine($"🔍 A. Iniciando roles EF para userId: {userId}");
+//         
+//             // ✅ Usar EF Core en lugar de conexión manual
+//             var roleNames = await _context.UserRoles
+//                 .Where(ur => ur.UserId == userId)
+//                 .Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
+//                 .ToListAsync();
+//             
+//             Console.WriteLine($"🔍 B. Roles EF encontrados: {string.Join(", ", roleNames)}");
+//             return roleNames;
+//         }
+//         catch (Exception ex)
+//         {
+//             Console.WriteLine($"💥 ERROR en GetUserRolesOptimized: {ex.Message}");
+//             throw;
+//         }
+//     }
+
     [HttpPost("authenticate")]
-    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    public IActionResult Login([FromBody] LoginDto loginDto)
     {
-        try
+        Console.WriteLine($"🚨 AUTHENTICATE - Request recibido para: {loginDto?.Email}");
+    
+        // Sin tocar la BD - respuesta inmediata
+        return Ok(new
         {
-            
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
-                return Unauthorized(new { success = false, message = "Usuario no encontrado" });
-
-            var passwordCheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-            if (!passwordCheck)
-                return Unauthorized(new { success = false, message = "Contraseña incorrecta" });
-
-            //  Query directa optimizada para obtener roles
-            var roles = await GetUserRolesOptimized(user.Id);
-        
-            var token = _jwtService.GenerateToken(user, roles);
-
-            return Ok(new
-            {
-                success = true,
-                token,
-                user = new { user.Id, user.Email, user.Name, user.University, roles }
-            });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { success = false, message = $"Error: {ex.Message}" });
-        }
-    }
-
-//  Metodo optimizado para obtener roles
-    private async Task<IList<string>> GetUserRolesOptimized(string userId)
-    {
-        try 
-        {
-            Console.WriteLine($"🔍 A. Iniciando roles EF para userId: {userId}");
-        
-            // ✅ Usar EF Core en lugar de conexión manual
-            var roleNames = await _context.UserRoles
-                .Where(ur => ur.UserId == userId)
-                .Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
-                .ToListAsync();
-            
-            Console.WriteLine($"🔍 B. Roles EF encontrados: {string.Join(", ", roleNames)}");
-            return roleNames;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"💥 ERROR en GetUserRolesOptimized: {ex.Message}");
-            throw;
-        }
+            success = true,
+            token = "temp-jwt-token-12345",
+            user = new { 
+                id = "temp-user-id", 
+                email = loginDto.Email, 
+                name = "Usuario Temporal",
+                role = "Admin" 
+            },
+            message = "Login temporal sin BD"
+        });
     }
     /// <summary>
     /// //////////////////////////////////
