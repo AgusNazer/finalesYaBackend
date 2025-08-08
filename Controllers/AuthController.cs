@@ -47,8 +47,6 @@ public class AuthController : ControllerBase
     {
         try
         {
-            Console.WriteLine($"🚨 LOGIN INICIADO para: {loginDto?.Email}");
-        
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
                 return Unauthorized(new { success = false, message = "Usuario no encontrado" });
@@ -57,33 +55,19 @@ public class AuthController : ControllerBase
             if (!passwordCheck)
                 return Unauthorized(new { success = false, message = "Contraseña incorrecta" });
 
-            // ✅ VOLVER A USAR ROLES - ahora que la BD está limpia
             var roles = await _userManager.GetRolesAsync(user);
-        
-            Console.WriteLine($"✅ Roles obtenidos: {string.Join(", ", roles)}");
-
             var token = _jwtService.GenerateToken(user, roles);
-
-            Console.WriteLine("✅ LOGIN COMPLETADO EXITOSAMENTE");
 
             return Ok(new
             {
                 success = true,
                 token,
-                user = new
-                {
-                    user.Id,
-                    user.Email,
-                    user.Name,
-                    user.University,
-                    roles
-                }
+                user = new { user.Id, user.Email, user.Name, user.University, roles }
             });
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"💥 ERROR en LOGIN: {ex.Message}");
-            return BadRequest(new { success = false, message = $"Error: {ex.Message}" });
+            return BadRequest(new { success = false, message = ex.Message });
         }
     }
     
