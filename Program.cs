@@ -26,7 +26,7 @@ var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};
                        $"Timeout=30;" +
                        $"ConnectionIdleLifetime=300;";
 
-// MÉTODO PARA CREAR ROLES Y ADMIN - DEBE IR AQUÍ ANTES DE builder.Build()
+// MÉTODO PARA CREAR ROLES Y ADMIN - CON VERIFICACIÓN MEJORADA
 static async Task SeedRoles(IServiceProvider serviceProvider)
 {
     try
@@ -36,56 +36,98 @@ static async Task SeedRoles(IServiceProvider serviceProvider)
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
 
-        // Crear roles si no existen
-        if (!await roleManager.RoleExistsAsync("User"))
+        // Verificar y crear roles con mejor manejo de errores
+        try
         {
-            await roleManager.CreateAsync(new IdentityRole("User"));
-            Console.WriteLine("✅ Rol 'User' creado");
+            if (!await roleManager.RoleExistsAsync("User"))
+            {
+                var userRoleResult = await roleManager.CreateAsync(new IdentityRole("User"));
+                if (userRoleResult.Succeeded)
+                    Console.WriteLine("✅ Rol 'User' creado");
+                else
+                    Console.WriteLine($"⚠️ Rol 'User' ya existe o error: {string.Join(", ", userRoleResult.Errors.Select(e => e.Description))}");
+            }
+            else
+            {
+                Console.WriteLine("ℹ️ Rol 'User' ya existe");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️ Error con rol 'User': {ex.Message}");
         }
         
-        if (!await roleManager.RoleExistsAsync("Admin"))
+        try
         {
-            await roleManager.CreateAsync(new IdentityRole("Admin"));
-            Console.WriteLine("✅ Rol 'Admin' creado");
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                var adminRoleResult = await roleManager.CreateAsync(new IdentityRole("Admin"));
+                if (adminRoleResult.Succeeded)
+                    Console.WriteLine("✅ Rol 'Admin' creado");
+                else
+                    Console.WriteLine($"⚠️ Rol 'Admin' ya existe o error: {string.Join(", ", adminRoleResult.Errors.Select(e => e.Description))}");
+            }
+            else
+            {
+                Console.WriteLine("ℹ️ Rol 'Admin' ya existe");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️ Error con rol 'Admin': {ex.Message}");
         }
 
         // Crear admin por defecto si no existe
         var adminEmail = "admin@finalesya.com";
-        var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
-        
-        if (existingAdmin == null)
+        try
         {
-            var admin = new Usuario
+            var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+            
+            if (existingAdmin == null)
             {
-                UserName = adminEmail,
-                Email = adminEmail,
-                Name = "Admin",
-                University = "Sistema", 
-                EmailConfirmed = true
-            };
+                var admin = new Usuario
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    Name = "Admin",
+                    University = "Sistema", 
+                    EmailConfirmed = true
+                };
 
-            var result = await userManager.CreateAsync(admin, "Admin123!");
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(admin, "Admin");
-                Console.WriteLine("✅ Usuario Admin creado exitosamente");
+                var result = await userManager.CreateAsync(admin, "Admin123!");
+                if (result.Succeeded)
+                {
+                    try
+                    {
+                        await userManager.AddToRoleAsync(admin, "Admin");
+                        Console.WriteLine("✅ Usuario Admin creado exitosamente");
+                    }
+                    catch (Exception roleEx)
+                    {
+                        Console.WriteLine($"⚠️ Usuario creado pero error asignando rol: {roleEx.Message}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"❌ Error creando admin: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
             }
             else
             {
-                Console.WriteLine($"❌ Error creando admin: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                Console.WriteLine("ℹ️ Admin ya existe, saltando creación");
             }
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine("ℹ️ Admin ya existe, saltando creación");
+            Console.WriteLine($"⚠️ Error manejando usuario admin: {ex.Message}");
         }
         
-        Console.WriteLine("🌱 SEED COMPLETADO EXITOSAMENTE");
+        Console.WriteLine("🌱 SEED COMPLETADO");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"💥 ERROR EN SEED: {ex.Message}");
-        throw;
+        Console.WriteLine($"💥 ERROR GENERAL EN SEED: {ex.Message}");
+        // NO hacer throw - que la app siga funcionando
     }
 }
 
