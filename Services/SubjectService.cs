@@ -47,7 +47,8 @@ namespace finalesYaBackend.Services
             {
                 Name = dto.Name,
                 Major = dto.Major,
-                YearTaken = dto.YearTaken
+                YearTaken = dto.YearTaken,
+                UsuarioId = dto.UsuarioId
             };
 
             _context.Subjects.Add(subject);
@@ -58,7 +59,7 @@ namespace finalesYaBackend.Services
                 Id = subject.Id,
                 Name = subject.Name,
                 Major = subject.Major,
-                YearTaken = subject.YearTaken
+                YearTaken = subject.YearTaken,
             };
         }
 
