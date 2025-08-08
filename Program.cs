@@ -11,101 +11,82 @@ using Microsoft.AspNetCore.Identity.UI;
 using System.Text;
 
 
-using Npgsql.EntityFrameworkCore.PostgreSQL;
-using DotNetEnv;
 
 DotNetEnv.Env.Load();
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Construir connection string directamente
+// 🔧 CONNECTION STRING OPTIMIZADO - AQUÍ ESTABA EL PROBLEMA
 var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
                        $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
                        $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
                        $"Username={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
                        $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
                        $"SslMode=Require;" +
-                       $"CommandTimeout=120;" +          
-                       $"Timeout=120;";
+                       $"Pooling=true;" +                    // ✅ AGREGAR: Connection pooling
+                       $"MinPoolSize=1;" +                   // ✅ AGREGAR: Pool mínimo
+                       $"MaxPoolSize=10;" +                  // ✅ AGREGAR: Pool máximo
+                       $"CommandTimeout=30;" +               // ✅ CAMBIAR: De 120 a 30 segundos
+                       $"ConnectionTimeout=30;" +            // ✅ CAMBIAR: De Timeout a ConnectionTimeout
+                       $"ConnectionIdleLifetime=300;";       // ✅ AGREGAR: Limpiar conexiones idle
 
 builder.Services.AddControllers();
 
-//CORS
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5173"     // Vite
-                //"https://xxxx"      // Producción 
-                
-            )
-            .AllowAnyMethod()                // GET, POST, PUT, DELETE
-            .AllowAnyHeader()                // Authorization, Content-Type
-            .AllowCredentials();             // Para autenticación
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
-// builder.Services.AddIdentity<Usuario, IdentityRole>()
-//     .AddEntityFrameworkStores<AppDbContext>()
-//     .AddDefaultTokenProviders();
+// Identity con configuración optimizada
 builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+})
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<AppDbContext>();
+
+// JWT
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var jwtSettings = builder.Configuration.GetSection("Jwt");
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.Password.RequireDigit = false;
-        options.Password.RequireLowercase = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequiredLength = 6;
-    })
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>();
-    // .AddDefaultTokenProviders();
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!))
+    };
+});
 
-    builder.Services.AddScoped<IJwtService, JwtService>();
-    builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            var jwtSettings = builder.Configuration.GetSection("Jwt");
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!))
-            };
-        });
-
-
-// Swagger con documentación XML
+// Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo 
     { 
         Title = "Finales Ya API", 
         Version = "v1",
-        Description = "API para gestión de usuarios, materias y exámenes finales",
-        Contact = new OpenApiContact
-        {
-            Name = "Tu Nombre",
-            Email = "tu-email@ejemplo.com"
-        }
+        Description = "API para gestión de usuarios, materias y exámenes finales"
     });
-
-    // Incluir comentarios XML
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    if (File.Exists(xmlPath))
-    {
-        c.IncludeXmlComments(xmlPath);
-    }
 });
 
 builder.Services.AddHttpClient();
@@ -116,82 +97,31 @@ builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<ICalendarService, CalendarService>();
 
-// Base de datos Myql
-// builder.Services.AddDbContext<AppDbContext>(options =>
-//     options.UseMySql(
-//         builder.Configuration.GetConnectionString("DefaultConnection"),
-//         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-//     )
-// );
-
-//Base de datos postgres
+// 🔧 BASE DE DATOS OPTIMIZADA - CON TIMEOUTS Y RETRIES
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString)
+    options.UseNpgsql(connectionString, npgsqlOptions =>
+    {
+        npgsqlOptions.CommandTimeout(30);              // ✅ Timeout de comando
+        npgsqlOptions.EnableRetryOnFailure(            // ✅ Retry automático
+            maxRetryCount: 3,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorCodesToAdd: null);
+    })
 );
 
-//configurar timezone
+// Configurar timezone
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-//docker config
-// Configuración del puerto para Render
-// builder.WebHost.UseKestrel(options =>
-// {
-//     var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
-//     options.ListenAnyIP(int.Parse(port));
-// });
-//port para render
+// Puerto para Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// Método para crear roles y admin inicial
-static async Task SeedRoles(IServiceProvider serviceProvider)
-{
-    // Obtengo los managers para manejar roles y usuarios
-    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
-
-    // Crear roles si no existen
-    if (!await roleManager.RoleExistsAsync("User"))
-        await roleManager.CreateAsync(new IdentityRole("User"));
-    
-    if (!await roleManager.RoleExistsAsync("Admin"))
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
-
-    // Crear admin por defecto si no existe
-    var adminEmail = "admin@finalesya.com";
-    if (await userManager.FindByEmailAsync(adminEmail) == null)
-    {
-        var admin = new Usuario
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            Name = "Admin",
-            University = "Sistema",
-            EmailConfirmed = true
-        };
-
-        var result = await userManager.CreateAsync(admin, "Admin123!");
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(admin, "Admin");
-        }
-    }
-}
-
 var app = builder.Build();
 
-// Agregar health check en la raíz
+// Health check
 app.MapGet("/", () => "FinalesYa API is running! 🚀");
 
-// Seed roles al iniciar la aplicación
-//comento para probar el deplot
-// using (var scope = app.Services.CreateScope())
-// {
-//     await SeedRoles(scope.ServiceProvider);
-// }
-
-
-// Configurar Swagger UI
+// Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -200,11 +130,8 @@ app.UseSwaggerUI(c =>
     c.DocumentTitle = "Finales Ya API - Documentación";
 });
 
-
-// app.UseHttpsRedirection();// comentar en produccion
 app.UseStaticFiles();
 app.UseRouting();
-//cors
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
