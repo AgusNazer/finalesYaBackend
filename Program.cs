@@ -12,19 +12,73 @@ DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Connection string optimizado
-var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
+// Connection string optimizado para Railway
+var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
                        $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
                        $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
                        $"Username={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
                        $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
-                       $"SslMode=Require;" +
+                       $"SslMode=Prefer;" +                  // Cambiar de Require a Prefer
                        $"Pooling=true;" +
                        $"MinPoolSize=1;" +
-                       $"MaxPoolSize=10;" +
+                       $"MaxPoolSize=20;" +                  // Aumentar pool size
                        $"CommandTimeout=30;" +
-                       $"Timeout=30;" +
+                       $"Timeout=15;" +                      // Reducir timeout inicial
                        $"ConnectionIdleLifetime=300;";
+
+// MÉTODO SEED para Railway (funciona bien con PostgreSQL dedicado)
+static async Task SeedRoles(IServiceProvider serviceProvider)
+{
+    try
+    {
+        Console.WriteLine("🌱 INICIANDO SEED EN RAILWAY...");
+        
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
+
+        // Crear roles si no existen
+        if (!await roleManager.RoleExistsAsync("User"))
+        {
+            await roleManager.CreateAsync(new IdentityRole("User"));
+            Console.WriteLine("✅ Rol 'User' creado");
+        }
+        
+        if (!await roleManager.RoleExistsAsync("Admin"))
+        {
+            await roleManager.CreateAsync(new IdentityRole("Admin"));
+            Console.WriteLine("✅ Rol 'Admin' creado");
+        }
+
+        // Crear admin por defecto si no existe
+        var adminEmail = "admin@finalesya.com";
+        var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+        
+        if (existingAdmin == null)
+        {
+            var admin = new Usuario
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                Name = "Admin",
+                University = "Sistema", 
+                EmailConfirmed = true
+            };
+
+            var result = await userManager.CreateAsync(admin, "Admin123!");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(admin, "Admin");
+                Console.WriteLine("✅ Usuario Admin creado exitosamente");
+            }
+        }
+        
+        Console.WriteLine("🌱 SEED COMPLETADO EN RAILWAY");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"💥 ERROR EN SEED: {ex.Message}");
+    }
+}
 
 builder.Services.AddControllers();
 
@@ -113,6 +167,12 @@ var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
+
+// ✅ HABILITAR SEED - Railway puede manejarlo
+using (var scope = app.Services.CreateScope())
+{
+    await SeedRoles(scope.ServiceProvider);
+}
 
 // Health check
 app.MapGet("/", () => "FinalesYa API is running! 🚀");
