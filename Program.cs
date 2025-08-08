@@ -26,111 +26,6 @@ var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};
                        $"Timeout=30;" +
                        $"ConnectionIdleLifetime=300;";
 
-// MÉTODO PARA CREAR ROLES Y ADMIN - CON VERIFICACIÓN MEJORADA
-static async Task SeedRoles(IServiceProvider serviceProvider)
-{
-    try
-    {
-        Console.WriteLine("🌱 INICIANDO SEED DE ROLES Y ADMIN...");
-        
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
-
-        // Verificar y crear roles con mejor manejo de errores
-        try
-        {
-            if (!await roleManager.RoleExistsAsync("User"))
-            {
-                var userRoleResult = await roleManager.CreateAsync(new IdentityRole("User"));
-                if (userRoleResult.Succeeded)
-                    Console.WriteLine("✅ Rol 'User' creado");
-                else
-                    Console.WriteLine($"⚠️ Rol 'User' ya existe o error: {string.Join(", ", userRoleResult.Errors.Select(e => e.Description))}");
-            }
-            else
-            {
-                Console.WriteLine("ℹ️ Rol 'User' ya existe");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"⚠️ Error con rol 'User': {ex.Message}");
-        }
-        
-        try
-        {
-            if (!await roleManager.RoleExistsAsync("Admin"))
-            {
-                var adminRoleResult = await roleManager.CreateAsync(new IdentityRole("Admin"));
-                if (adminRoleResult.Succeeded)
-                    Console.WriteLine("✅ Rol 'Admin' creado");
-                else
-                    Console.WriteLine($"⚠️ Rol 'Admin' ya existe o error: {string.Join(", ", adminRoleResult.Errors.Select(e => e.Description))}");
-            }
-            else
-            {
-                Console.WriteLine("ℹ️ Rol 'Admin' ya existe");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"⚠️ Error con rol 'Admin': {ex.Message}");
-        }
-
-        // Crear admin por defecto si no existe
-        var adminEmail = "admin@finalesya.com";
-        try
-        {
-            var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
-            
-            if (existingAdmin == null)
-            {
-                var admin = new Usuario
-                {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    Name = "Admin",
-                    University = "Sistema", 
-                    EmailConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(admin, "Admin123!");
-                if (result.Succeeded)
-                {
-                    try
-                    {
-                        await userManager.AddToRoleAsync(admin, "Admin");
-                        Console.WriteLine("✅ Usuario Admin creado exitosamente");
-                    }
-                    catch (Exception roleEx)
-                    {
-                        Console.WriteLine($"⚠️ Usuario creado pero error asignando rol: {roleEx.Message}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"❌ Error creando admin: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("ℹ️ Admin ya existe, saltando creación");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"⚠️ Error manejando usuario admin: {ex.Message}");
-        }
-        
-        Console.WriteLine("🌱 SEED COMPLETADO");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"💥 ERROR GENERAL EN SEED: {ex.Message}");
-        // NO hacer throw - que la app siga funcionando
-    }
-}
-
 builder.Services.AddControllers();
 
 // CORS
@@ -218,12 +113,6 @@ var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
-
-// 🚀 EJECUTAR SEED AQUÍ - DESPUÉS DE app = builder.Build()
-using (var scope = app.Services.CreateScope())
-{
-    await SeedRoles(scope.ServiceProvider);
-}
 
 // Health check
 app.MapGet("/", () => "FinalesYa API is running! 🚀");
