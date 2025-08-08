@@ -140,6 +140,15 @@ public class AuthController : ControllerBase
             throw;
         }
     }
+    /// <summary>
+    /// //////////////////////////////////
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("health")]
+    public IActionResult Health()
+    {
+        return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
+    }
 
 
     [HttpPost("register")]
