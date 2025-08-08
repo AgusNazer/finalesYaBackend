@@ -4,6 +4,12 @@
         <name>finalesYaBackend</name>
     </assembly>
     <members>
+        <member name="M:AuthController.Health">
+            <summary>
+            //////////////////////////////////
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:finalesYaBackend.Controllers.CalendarController.GetAll">
             <summary>
             Obtiene todos los calendarios registrados.
