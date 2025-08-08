@@ -168,10 +168,25 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// ✅ HABILITAR SEED - Railway puede manejarlo
+// ✅ CREAR TABLAS AUTOMÁTICAMENTE si no existen
 using (var scope = app.Services.CreateScope())
 {
-    await SeedRoles(scope.ServiceProvider);
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        Console.WriteLine("🔧 Verificando/creando tablas de base de datos...");
+        
+        // Crear todas las tablas automáticamente
+        await context.Database.EnsureCreatedAsync();
+        Console.WriteLine("✅ Tablas verificadas/creadas exitosamente");
+        
+        // Ahora ejecutar el seed
+        await SeedRoles(scope.ServiceProvider);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"💥 ERROR CREANDO TABLAS: {ex.Message}");
+    }
 }
 
 // Health check
