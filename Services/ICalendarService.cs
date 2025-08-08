@@ -10,6 +10,7 @@ namespace finalesYaBackend.Services
         /// </summary>
         /// <returns>Lista de todos los calendarios</returns>
         Task<IEnumerable<CalendarReadDto>> GetAllAsync();
+        
 
         /// <summary>
         /// Obtiene un calendario específico por su ID.
