@@ -27,7 +27,7 @@ var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};
                        $"MinPoolSize=1;" +                   // ✅ AGREGAR: Pool mínimo
                        $"MaxPoolSize=10;" +                  // ✅ AGREGAR: Pool máximo
                        $"CommandTimeout=30;" +               // ✅ CAMBIAR: De 120 a 30 segundos
-                       $"ConnectionTimeout=30;" +            // ✅ CAMBIAR: De Timeout a ConnectionTimeout
+                       $"Timeout=30;" +            
                        $"ConnectionIdleLifetime=300;";       // ✅ AGREGAR: Limpiar conexiones idle
 
 builder.Services.AddControllers();
