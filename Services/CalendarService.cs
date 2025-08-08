@@ -470,5 +470,23 @@ namespace finalesYaBackend.Services
                 NextExamDate = nextExam?.Date
             };
         }
+        public async Task<object> DebugSubjects(string usuarioId)
+        {
+            var subjects = await _context.Subjects
+                .Where(s => s.UsuarioId == usuarioId)
+                .Select(s => new { s.Id, s.Name, s.UsuarioId })
+                .ToListAsync();
+        
+            var allSubjects = await _context.Subjects
+                .Select(s => new { s.Id, s.Name, s.UsuarioId })
+                .ToListAsync();
+    
+            return new { 
+                buscandoUserId = usuarioId,
+                subjectsDelUsuario = subjects,
+                todosLosSubjects = allSubjects 
+            };
+        }
     }
+    
 }

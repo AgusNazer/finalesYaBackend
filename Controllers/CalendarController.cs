@@ -27,6 +27,19 @@ namespace finalesYaBackend.Controllers
             var calendars = await _calendarService.GetAllAsync();
             return Ok(calendars);
         }
+ 
+        [HttpGet("debug-data")]
+        public async Task<IActionResult> DebugData()
+        {
+            // Usar el service que ya tienes
+            var result = await _calendarService.GetCalendarViewAsync("6f26cffd-88e3-4694-85f5-eaa566837bde", 2025, 8);
+    
+            // También obtener un examen específico si tienes el service
+            return Ok(new { 
+                calendarView = result,
+                message = "Si ves examsByDate vacío, el problema está en GetExamsByDateRangeAsync"
+            });
+        }
 
         /// <summary>
         /// Obtiene un calendario específico por ID.
@@ -177,5 +190,9 @@ namespace finalesYaBackend.Controllers
             if (!deleted) return NotFound();
             return NoContent();
         }
+        
     }
+    
+    
+    
 }
