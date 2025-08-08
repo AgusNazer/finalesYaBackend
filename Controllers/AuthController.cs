@@ -47,24 +47,25 @@ public class AuthController : ControllerBase
     {
         try
         {
+            Console.WriteLine($"🚨 LOGIN INICIADO para: {loginDto?.Email}");
+        
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-    
             if (user == null)
                 return Unauthorized(new { success = false, message = "Usuario no encontrado" });
-    
+
             var passwordCheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-    
             if (!passwordCheck)
                 return Unauthorized(new { success = false, message = "Contraseña incorrecta" });
-    
-            // Si querés evitar el bug de GetRolesAsync(), podés pasar una lista vacía temporalmente
-            // var roles = new List<string>(); // <- evitar llamada problemática
-    
-            // O si estás seguro que no se cuelga más, descomentá:
+
+            // ✅ VOLVER A USAR ROLES - ahora que la BD está limpia
             var roles = await _userManager.GetRolesAsync(user);
-    
+        
+            Console.WriteLine($"✅ Roles obtenidos: {string.Join(", ", roles)}");
+
             var token = _jwtService.GenerateToken(user, roles);
-    
+
+            Console.WriteLine("✅ LOGIN COMPLETADO EXITOSAMENTE");
+
             return Ok(new
             {
                 success = true,
@@ -81,6 +82,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"💥 ERROR en LOGIN: {ex.Message}");
             return BadRequest(new { success = false, message = $"Error: {ex.Message}" });
         }
     }
