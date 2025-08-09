@@ -27,6 +27,19 @@ namespace finalesYaBackend.Controllers
             var exams = await _examService.GetAllAsync();
             return Ok(exams);
         }
+        
+        //GET api/exams/user/{userId} - Filtrado por usuario
+        /// <summary>
+        /// Obtiene todos los examenes segun userId.
+        /// </summary>
+        /// <returns>Lista de todos los exámenes con información de la materia segun userId</returns>
+        /// <response code="200">Devuelve la lista de exámenes</response>
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<ExamReadDto>>> GetByUser(string userId)
+        {
+            var exams = await _examService.GetByUserAsync(userId);
+            return Ok(exams);
+        }
 
         /// <summary>
         /// Obtiene un examen específico por ID.

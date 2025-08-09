@@ -26,6 +26,20 @@ namespace finalesYaBackend.Services
                 YearTaken = subject.YearTaken
             });
         }
+        public async Task<IEnumerable<SubjectReadDto>> GetByUserAsync(string userId)
+        {
+            var subjects = await _context.Subjects
+                .Where(s => s.UsuarioId == userId)
+                .ToListAsync();
+
+            return subjects.Select(s => new SubjectReadDto
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Major = s.Major,
+                YearTaken = s.YearTaken
+            });
+        }
 
         public async Task<SubjectReadDto?> GetByIdAsync(int id)
         {

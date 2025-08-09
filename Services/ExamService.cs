@@ -30,6 +30,26 @@ namespace finalesYaBackend.Services
                 SubjectName = exam.Subject.Name
             });
         }
+        
+        
+        public async Task<IEnumerable<ExamReadDto>> GetByUserAsync(string userId)
+        {
+            var exams = await _context.Exams
+                .Include(e => e.Subject)
+                .Where(e => e.Subject.UsuarioId == userId)
+                .ToListAsync();
+
+            return exams.Select(e => new ExamReadDto
+            {
+                Id = e.Id,
+                Type = e.Type,
+                Date = e.Date,
+                Location = e.Location,
+                Passed = e.Passed,
+                SubjectId = e.SubjectId,
+                SubjectName = e.Subject.Name
+            });
+        }
 
         public async Task<ExamReadDto?> GetByIdAsync(int id)
         {
