@@ -9,6 +9,11 @@ public interface ISubjectService
     /// Devuelve todos los subjects de forma asíncrona.
     /// </summary>
     Task<IEnumerable<SubjectReadDto>> GetAllAsync();
+    
+    /// <summary>
+    /// Devuelve todos los subjects por id del user de forma asíncrona.
+    /// </summary>
+    Task<IEnumerable<SubjectReadDto>> GetByUserAsync(string userId);
 
     /// <summary>
     /// Devuelve un subject por ID de forma asíncrona.

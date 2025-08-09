@@ -10,6 +10,13 @@ namespace finalesYaBackend.Services
         /// </summary>
         /// <returns>Lista de todos los exámenes</returns>
         Task<IEnumerable<ExamReadDto>> GetAllAsync();
+        
+        
+        /// <summary>
+        /// Obtiene los exámenes registrados con información de la materia asociada por userId.
+        /// </summary>
+        /// <returns>Lista de los exámenes</returns>
+        Task<IEnumerable<ExamReadDto>> GetByUserAsync(string userId);
 
         /// <summary>
         /// Obtiene un examen específico por su ID.

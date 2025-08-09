@@ -23,6 +23,14 @@ public class SubjectController : ControllerBase
         var subjects = await _subjectService.GetAllAsync();
         return Ok(subjects);
     }
+    
+    //GET api/subject/user/{userId} - Filtrado por usuario
+    [HttpGet("user/{userId}")]
+public async Task<ActionResult<IEnumerable<SubjectReadDto>>> GetByUser(string userId)
+{
+    var subjects = await _subjectService.GetByUserAsync(userId);
+    return Ok(subjects);
+}
     // GET: api/subject/5
     [HttpGet("{id}")]
     public async Task<ActionResult<SubjectReadDto>> GetById(int id)
