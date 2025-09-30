@@ -15,3 +15,5 @@ appsettings.Development.json
 appsettings.Production.json
 # OS
 .DS_Store
+appsettings.Production.json
+appsettings.Development.json
